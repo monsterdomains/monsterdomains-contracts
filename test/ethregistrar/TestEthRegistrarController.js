@@ -28,6 +28,7 @@ contract('MIDRegistrarController', function (accounts) {
         mid = await MID.new();
         nameWrapper = await NameWrapper.new();
         baseRegistrar = await BaseRegistrar.new(mid.address, namehash.hash('bnb'), {from: ownerAccount});
+		await baseRegistrar.setMaxMintPerUser(10);
         await mid.setSubnodeOwner('0x0', sha3('bnb'), baseRegistrar.address);
 
         const dummyOracle = await DummyOracle.new(toBN(100000000));

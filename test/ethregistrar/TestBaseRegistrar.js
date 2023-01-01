@@ -16,6 +16,7 @@ contract('BaseRegistrar', function (accounts) {
 	const controllerAccount = accounts[1];
 	const registrantAccount = accounts[2];
 	const otherAccount = accounts[3];
+	const anotherAccount = accounts[4];
 
 	let mid;
 	let registrar;
@@ -24,6 +25,7 @@ contract('BaseRegistrar', function (accounts) {
 		mid = await MID.new();
 
 		registrar = await BaseRegistrar.new(mid.address, namehash.hash('bnb'), {from: ownerAccount});
+		await registrar.setMaxMintPerUser(10);
 		await registrar.addController(controllerAccount, {from: ownerAccount});
 		await mid.setSubnodeOwner('0x0', sha3('bnb'), registrar.address);
 	});
@@ -124,5 +126,26 @@ contract('BaseRegistrar', function (accounts) {
 	it('should allow the owner to set a resolver address', async () => {
 		await registrar.setResolver(accounts[1], {from: ownerAccount});
 		assert.equal(await mid.resolver(namehash.hash('bnb')), accounts[1]);
+	});
+
+	it('should limit the counts of domains held by users', async () => {
+		// only owner can set the cap
+		await expect(registrar.setMaxMintPerUser(1, {from: accounts[1]})).to.be.revertedWith(
+			'Ownable: caller is not the owner',
+		);
+		await registrar.setMaxMintPerUser(2, {from: ownerAccount})
+		await registrar.register(sha3("newname11"), anotherAccount, 86400, {from: controllerAccount});
+		await registrar.register(sha3("newname22"), anotherAccount, 86400, {from: controllerAccount});
+		await expect(registrar.register(sha3("newname33"), anotherAccount, 86400, {from: controllerAccount})).to.be.revertedWith(
+			'balance exceeds cap',
+		);
+		await registrar.register(sha3("newname333"), otherAccount, 86400, {from: controllerAccount});
+		
+		// transfer should be prevented as well
+		await expect(registrar.transferFrom(otherAccount, anotherAccount, sha3("newname333"), {from: otherAccount})).to.be.revertedWith(
+			'balance exceeds cap',
+		);
+		await registrar.transferFrom(anotherAccount, controllerAccount, sha3("newname11"), {from: anotherAccount})
+		await registrar.transferFrom(otherAccount, anotherAccount, sha3("newname333"), {from: otherAccount}) // ok
 	});
 });

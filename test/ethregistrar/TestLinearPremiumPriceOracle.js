@@ -16,6 +16,7 @@ contract('LinearPremiumPriceOracle', function (accounts) {
         mid = await MID.new();
         registrar = await BaseRegistrar.new(mid.address, namehash.hash('eth'));
         await mid.setSubnodeOwner('0x0', sha3('eth'), registrar.address);
+		await registrar.setMaxMintPerUser(10);
         await registrar.addController(accounts[0]);
 
         // Dummy oracle with 1 ETH == 2 USD

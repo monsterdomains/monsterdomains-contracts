@@ -14,6 +14,7 @@ contract('StablePriceOracle', function (accounts) {
     before(async () => {
         mid = await MID.new();
         registrar = await BaseRegistrar.new(mid.address, namehash.hash('eth'));
+        await registrar.setMaxMintPerUser(10);
 
         // Dummy oracle with 1 ETH == 10 USD
         var dummyOracle = await DummyOracle.new(toBN(1000000000));

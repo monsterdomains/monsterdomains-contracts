@@ -50,6 +50,7 @@ contract('BulkRenewal', function (accounts) {
 
 		// Create a base registrar
 		baseRegistrar = await BaseRegistrar.new(mid.address, namehash.hash('bnb'), {from: ownerAccount});
+		await baseRegistrar.setMaxMintPerUser(10);
 
 		// Set up a dummy price oracle and a controller
 		const dummyOracle = await DummyOracle.new(toBN(100000000));

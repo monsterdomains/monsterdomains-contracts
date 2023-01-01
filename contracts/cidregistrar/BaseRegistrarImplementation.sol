@@ -15,9 +15,29 @@ contract BaseRegistrarImplementation is
     // A map of expiry times
     mapping(uint256 => uint256) expiries;
 
+    /**
+     * @dev Base URI of NFT metadata
+     */
     string public baseURI;
+
+    /**
+     * @dev All minted token ids
+     */
     uint256[] internal tokens;
+
+    /**
+     * @dev The max minting count per account
+     */
+    uint256 public maxMintPerUser;
+
+    /**
+     * @dev mapping from token id to index in tokens array
+     */
     mapping(uint256 => uint256) internal idToIndexes;
+
+    /**
+     * @dev mapping from owner address to token ids
+     */
     mapping(address => uint256[]) internal ownerToIds;
 
     bytes4 private constant INTERFACE_META_ID =
@@ -38,6 +58,7 @@ contract BaseRegistrarImplementation is
         bytes4(keccak256("reclaim(uint256,address)"));
 
     event BaseURIChanged(string indexed URI);
+    event MaxMintCapChanged(uint256 indexed cap);
 
     /**
      * v2.1.3 version of _isApprovedOrOwner which calls ownerOf(tokenId) and takes grace period into consideration instead of ERC721.ownerOf(tokenId);
@@ -302,6 +323,25 @@ contract BaseRegistrarImplementation is
         );
         _safeTransfer(from, to, tokenId, _data);
         mid.setSubnodeOwner(baseNode, bytes32(tokenId), to);
+    }
+
+    function setMaxMintPerUser(uint256 cap) onlyOwner external {
+        require(cap > 0, "invalid mint cap");
+        maxMintPerUser = cap;
+        emit MaxMintCapChanged(cap);
+    }
+
+    function _afterTokenTransfer(
+        address from,
+        address to,
+        uint256 firstTokenId,
+        uint256 batchSize
+    ) internal virtual override(ERC721) {
+        super._afterTokenTransfer(from, to, firstTokenId, batchSize);
+        // when it's a burn action, to is zero address
+        if (to != address(0)) {
+            require(balanceOf(to) <= maxMintPerUser, "balance exceeds cap");
+        }
     }
 
     function supportsInterface(bytes4 interfaceID)
