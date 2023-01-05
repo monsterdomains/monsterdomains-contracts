@@ -148,4 +148,26 @@ contract('BaseRegistrar', function (accounts) {
 		await registrar.transferFrom(anotherAccount, controllerAccount, sha3("newname11"), {from: anotherAccount})
 		await registrar.transferFrom(otherAccount, anotherAccount, sha3("newname333"), {from: otherAccount}) // ok
 	});
+
+	it('test token id reservation', async function () {
+		// only owner can add reserved id
+		await expect(registrar.addReservedTokenId([sha3("reservedname1"), sha3("reservedname2")], {from: anotherAccount})).to.be.revertedWith(
+			'Ownable: caller is not the owner',
+		);
+
+		await registrar.addReservedTokenId([sha3("reservedname1"), sha3("reservedname2")]);
+		await expect(registrar.register(sha3("reservedname1"), otherAccount, 86400, {from: controllerAccount})).to.be.revertedWith(
+			'reserved token id',
+		);
+		await expect(registrar.register(sha3("reservedname2"), otherAccount, 86400, {from: controllerAccount})).to.be.revertedWith(
+			'reserved token id',
+		);
+		// non-reserved id can still be registered
+		await registrar.register(sha3("non_reserved_name"), otherAccount, 86400, {from: controllerAccount})
+
+		await registrar.setReservedIDRegistrar(anotherAccount);
+		registrar.register(sha3("reservedname1"), otherAccount, 86400, {from: anotherAccount})
+		registrar.register(sha3("reservedname2"), otherAccount, 86400, {from: anotherAccount})
+			
+	})
 });

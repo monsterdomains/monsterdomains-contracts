@@ -6,13 +6,17 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "./BaseRegistrar.sol";
+import "./ReservedIDRegistrar.sol";
 
 contract BaseRegistrarImplementation is
     ERC721,
     IERC721Enumerable,
-    BaseRegistrar
+    BaseRegistrar,
+    ReservedIDRegistrar
 {
-    // A map of expiry times
+    /**
+     * @dev A map of expiry times
+     */
     mapping(uint256 => uint256) expiries;
 
     /**
@@ -175,6 +179,9 @@ contract BaseRegistrarImplementation is
         bool updateRegistry
     ) internal live onlyController returns (uint256) {
         require(available(id), "not available");
+        if (isTokenIdReserved(id) && !canRegisterReservedId(msg.sender)) {
+            revert("reserved token id");
+        }
         require(
             block.timestamp + duration + GRACE_PERIOD >
                 block.timestamp + GRACE_PERIOD,
@@ -296,8 +303,10 @@ contract BaseRegistrarImplementation is
         idToIndexes[_tokenId] = 0;
     }
 
-    // modify `transferFrom` and `safeTransferFrom` to make the domain automatically
-    // transfer to target owner as well
+    /**
+     * @dev modify `transferFrom` and `safeTransferFrom` to make the domain automatically
+     *  transfer to target owner as well
+     */
     function transferFrom(
         address from,
         address to,
@@ -311,6 +320,10 @@ contract BaseRegistrarImplementation is
         mid.setSubnodeOwner(baseNode, bytes32(tokenId), to);
     }
 
+    /**
+     * @dev modify `transferFrom` and `safeTransferFrom` to make the domain automatically
+     *  transfer to target owner as well
+     */
     function safeTransferFrom(
         address from,
         address to,
@@ -325,12 +338,18 @@ contract BaseRegistrarImplementation is
         mid.setSubnodeOwner(baseNode, bytes32(tokenId), to);
     }
 
+    /**
+     * @dev max mint per user setter
+     */
     function setMaxMintPerUser(uint256 cap) onlyOwner external {
         require(cap > 0, "invalid mint cap");
         maxMintPerUser = cap;
         emit MaxMintCapChanged(cap);
     }
-
+    
+    /**
+     * @dev _afterTokenTransfer hook will be called after transfering and minting
+     */
     function _afterTokenTransfer(
         address from,
         address to,
