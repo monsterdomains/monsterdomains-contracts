@@ -2,7 +2,6 @@
 pragma solidity >=0.8.4;
 
 import "./PriceOracle.sol";
-import "./SafeMath.sol";
 import "./StringUtils.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
@@ -13,7 +12,6 @@ interface AggregatorInterface {
 
 // StablePriceOracle sets a price in USD, based on an oracle.
 contract StablePriceOracle is Ownable, PriceOracle {
-    using SafeMath for *;
     using StringUtils for *;
 
     // Rent in base price units by length. Element 0 is for 1-length names, and so on.
@@ -43,8 +41,8 @@ contract StablePriceOracle is Ownable, PriceOracle {
         if(len > rentPrices.length) {
             len = rentPrices.length;
         }
-        uint basePrice = rentPrices[len - 1].mul(duration);
-        basePrice = basePrice.add(_premium(name, expires, duration));
+        uint basePrice = rentPrices[len - 1] * duration;
+        basePrice = basePrice + _premium(name, expires, duration);
 
         return attoUSDToWei(basePrice);
     }
@@ -87,12 +85,12 @@ contract StablePriceOracle is Ownable, PriceOracle {
 
     function attoUSDToWei(uint amount) internal view returns(uint) {
         uint ethPrice_ = ethPrice();
-        return amount.mul(1e8).div(ethPrice_);
+        return amount * 1e8 / ethPrice_;
     }
 
     function weiToAttoUSD(uint amount) internal view returns(uint) {
         uint ethPrice_ = ethPrice();
-        return amount.mul(ethPrice_).div(1e8);
+        return amount * ethPrice_ / 1e8;
     }
 
     function ethPrice() public view returns(uint) {
