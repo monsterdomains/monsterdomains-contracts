@@ -129,7 +129,7 @@ contract('BaseRegistrar', function (accounts) {
 	it('should allow registration of an expired domain', async () => {
 		const ts = (await web3.eth.getBlock('latest')).timestamp;
 		const expires = await registrar.nameExpires(sha3("newname"));
-		const grace = await registrar.GRACE_PERIOD();
+		const grace = await registrar.gracePeriod();
 		await evm.advanceTime(expires.toNumber() - ts + grace.toNumber() + 3600);
 
 		try {

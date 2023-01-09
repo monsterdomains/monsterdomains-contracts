@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 abstract contract BaseRegistrar is Ownable, IERC721 {
-    uint constant public GRACE_PERIOD = 90 days;
+    uint256 public gracePeriod = 30 days;
 
     event ControllerAdded(address indexed controller);
     event ControllerRemoved(address indexed controller);
@@ -22,6 +22,9 @@ abstract contract BaseRegistrar is Ownable, IERC721 {
 
     // A map of addresses that are authorised to register and renew names.
     mapping(address=>bool) public controllers;
+
+    // Reset the grace period
+    function setGracePeriod(uint256 gracePeriod_) virtual external;
 
     // Authorises a controller, who can register and renew domains.
     function addController(address controller) virtual external;

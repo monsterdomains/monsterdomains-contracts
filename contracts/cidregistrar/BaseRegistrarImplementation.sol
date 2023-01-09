@@ -65,6 +65,7 @@ contract BaseRegistrarImplementation is
 
     event BaseURIChanged(string indexed URI);
     event MaxMintCapChanged(uint256 indexed cap);
+    event GracePeriodChanged(uint256 indexed period);
 
     /**
      * v2.1.3 version of _isApprovedOrOwner which calls ownerOf(tokenId) and takes grace period into consideration instead of ERC721.ownerOf(tokenId);
@@ -133,6 +134,14 @@ contract BaseRegistrarImplementation is
     }
 
     /**
+     * @dev Reset the grace period
+     */
+    function setGracePeriod(uint256 gracePeriod_) external override onlyOwner {
+        gracePeriod = gracePeriod_;
+        emit GracePeriodChanged(gracePeriod);
+    }
+
+    /**
      * @dev Authorises a controller, who can register and renew domains.
      */
     function addController(address controller) external override onlyOwner {
@@ -167,7 +176,7 @@ contract BaseRegistrarImplementation is
      */
     function available(uint256 id) public view override returns (bool) {
         // Not available if it's registered here or in its grace period.
-        return expiries[id] + GRACE_PERIOD < block.timestamp;
+        return expiries[id] + gracePeriod < block.timestamp;
     }
 
     /**
@@ -209,8 +218,8 @@ contract BaseRegistrarImplementation is
             revert("reserved token id");
         }
         require(
-            block.timestamp + duration + GRACE_PERIOD >
-                block.timestamp + GRACE_PERIOD,
+            block.timestamp + duration + gracePeriod >
+                block.timestamp + gracePeriod,
             "timestamp overflow"
         ); // Prevent future overflow
 
@@ -241,11 +250,11 @@ contract BaseRegistrarImplementation is
         returns (uint256)
     {
         require(
-            expiries[id] + GRACE_PERIOD >= block.timestamp,
+            expiries[id] + gracePeriod >= block.timestamp,
             "still in grace period"
         ); // Name must be registered here or in grace period
         require(
-            expiries[id] + duration + GRACE_PERIOD > duration + GRACE_PERIOD,
+            expiries[id] + duration + gracePeriod > duration + gracePeriod,
             "timestamp overflowed"
         ); // Prevent future overflow
 
