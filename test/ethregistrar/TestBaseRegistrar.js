@@ -6,6 +6,7 @@ const sha3 = require('web3-utils').sha3;
 const toBN = require('web3-utils').toBN;
 
 const { evm, exceptions } = require("../test-utils");
+const { expect } = require('chai');
 
 
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000";
@@ -30,24 +31,41 @@ contract('BaseRegistrar', function (accounts) {
 		await mid.setSubnodeOwner('0x0', sha3('bnb'), registrar.address);
 	});
 
+	it('global pause', async () => {
+		await registrar.pause()
+		await expect(registrar.pause()).to.be.revertedWith('Pausable: paused')
+
+		await expect(
+			registrar.register(sha3("areyoualive"), registrantAccount, 86400, {from: controllerAccount})
+		).to.be.revertedWith('Pausable: paused')
+		await expect(
+			registrar.renew(sha3("areyoualive"), 86400, {from: controllerAccount})
+		).to.be.revertedWith('Pausable: paused')
+
+		await registrar.unpause()
+		// OK
+		await registrar.register(sha3("areyoualive"), registrantAccount, 86400, {from: controllerAccount});
+
+	})
+
 	it('should allow new registrations', async () => {
-		var tx = await registrar.register(sha3("newname"), registrantAccount, 86400, {from: controllerAccount});
-		var block = await web3.eth.getBlock(tx.receipt.blockHash);
+		const tx = await registrar.register(sha3("newname"), registrantAccount, 86400, {from: controllerAccount});
+		const block = await web3.eth.getBlock(tx.receipt.blockHash);
 		assert.equal(await mid.owner(namehash.hash("newname.bnb")), registrantAccount);
 		assert.equal(await registrar.ownerOf(sha3("newname")), registrantAccount);
 		assert.equal((await registrar.nameExpires(sha3("newname"))).toNumber(), block.timestamp + 86400);
 	});
 
 	it('should allow registrations without updating the registry', async () => {
-		var tx = await registrar.registerOnly(sha3("silentname"), registrantAccount, 86400, {from: controllerAccount});
-		var block = await web3.eth.getBlock(tx.receipt.blockHash);
+		const tx = await registrar.registerOnly(sha3("silentname"), registrantAccount, 86400, {from: controllerAccount});
+		const block = await web3.eth.getBlock(tx.receipt.blockHash);
 		assert.equal(await mid.owner(namehash.hash("silentname.bnb")), ZERO_ADDRESS);
 		assert.equal(await registrar.ownerOf(sha3("silentname")), registrantAccount);
 		assert.equal((await registrar.nameExpires(sha3("silentname"))).toNumber(), block.timestamp + 86400);
 	});
 
 	it('should allow renewals', async () => {
-		var oldExpires = await registrar.nameExpires(sha3("newname"));
+		const oldExpires = await registrar.nameExpires(sha3("newname"));
 		await registrar.renew(sha3("newname"), 86400, {from: controllerAccount});
 		assert.equal((await registrar.nameExpires(sha3("newname"))).toNumber(), oldExpires.add(toBN(86400)).toNumber());
 	});
@@ -97,7 +115,7 @@ contract('BaseRegistrar', function (accounts) {
 
 	it('should not permit transfer or reclaim during the grace period', async () => {
 		// Advance to the grace period
-		var ts = (await web3.eth.getBlock('latest')).timestamp;
+		const ts = (await web3.eth.getBlock('latest')).timestamp;
 		await evm.advanceTime((await registrar.nameExpires(sha3("newname"))).toNumber() - ts + 3600);
 		await evm.mine()
 		await exceptions.expectFailure(registrar.transferFrom(registrantAccount, otherAccount, sha3("newname"), {from: registrantAccount}));
@@ -109,9 +127,9 @@ contract('BaseRegistrar', function (accounts) {
 	});
 
 	it('should allow registration of an expired domain', async () => {
-		var ts = (await web3.eth.getBlock('latest')).timestamp;
-		var expires = await registrar.nameExpires(sha3("newname"));
-		var grace = await registrar.GRACE_PERIOD();
+		const ts = (await web3.eth.getBlock('latest')).timestamp;
+		const expires = await registrar.nameExpires(sha3("newname"));
+		const grace = await registrar.GRACE_PERIOD();
 		await evm.advanceTime(expires.toNumber() - ts + grace.toNumber() + 3600);
 
 		try {

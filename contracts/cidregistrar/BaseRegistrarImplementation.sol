@@ -5,10 +5,12 @@ import "../registry/MID.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/security/Pausable.sol";
 import "./BaseRegistrar.sol";
 import "./ReservedIDRegistrar.sol";
 
 contract BaseRegistrarImplementation is
+    Pausable,
     ERC721,
     IERC721Enumerable,
     BaseRegistrar,
@@ -101,6 +103,20 @@ contract BaseRegistrarImplementation is
     }
 
     /**
+     * @dev Pause the register & renew globally
+     */
+    function pause() external onlyOwner {
+        _pause();
+    }
+
+    /**
+     * @dev Unpause the register & renew globally
+     */
+    function unpause() external onlyOwner {
+        _unpause();
+    }
+
+    /**
      * @dev Gets the owner of the specified token ID. Names become unowned
      *      when their registration expires.
      * @param tokenId uint256 ID of the token to query the owner of
@@ -116,29 +132,39 @@ contract BaseRegistrarImplementation is
         return super.ownerOf(tokenId);
     }
 
-    // Authorises a controller, who can register and renew domains.
+    /**
+     * @dev Authorises a controller, who can register and renew domains.
+     */
     function addController(address controller) external override onlyOwner {
         controllers[controller] = true;
         emit ControllerAdded(controller);
     }
 
-    // Revoke controller permission for an address.
+    /**
+     * @dev Revoke controller permission for an address.
+     */
     function removeController(address controller) external override onlyOwner {
         controllers[controller] = false;
         emit ControllerRemoved(controller);
     }
 
-    // Set the resolver for the TLD this registrar manages.
+    /**
+     * @dev Set the resolver for the TLD this registrar manages.
+     */
     function setResolver(address resolver) external override onlyOwner {
         mid.setResolver(baseNode, resolver);
     }
 
-    // Returns the expiration timestamp of the specified id.
+    /**
+     * @dev Returns the expiration timestamp of the specified id.
+     */
     function nameExpires(uint256 id) external view override returns (uint256) {
         return expiries[id];
     }
 
-    // Returns true iff the specified name is available for registration.
+    /**
+     * @dev Returns true iff the specified name is available for registration.
+     */
     function available(uint256 id) public view override returns (bool) {
         // Not available if it's registered here or in its grace period.
         return expiries[id] + GRACE_PERIOD < block.timestamp;
@@ -177,7 +203,7 @@ contract BaseRegistrarImplementation is
         address owner,
         uint256 duration,
         bool updateRegistry
-    ) internal live onlyController returns (uint256) {
+    ) internal live onlyController whenNotPaused returns (uint256) {
         require(available(id), "not available");
         if (isTokenIdReserved(id) && !canRegisterReservedId(msg.sender)) {
             revert("reserved token id");
@@ -203,11 +229,15 @@ contract BaseRegistrarImplementation is
         return block.timestamp + duration;
     }
 
+    /**
+     * @dev Renew the name with input duration
+     */
     function renew(uint256 id, uint256 duration)
         external
         override
         live
         onlyController
+        whenNotPaused
         returns (uint256)
     {
         require(
@@ -227,7 +257,7 @@ contract BaseRegistrarImplementation is
     /**
      * @dev Reclaim ownership of a name in MID, if you own it in the registrar.
      */
-    function reclaim(uint256 id, address owner) external override live {
+    function reclaim(uint256 id, address owner) external override live whenNotPaused {
         require(_isApprovedOrOwner(msg.sender, id), "not approved or owner");
         mid.setSubnodeOwner(baseNode, bytes32(id), owner);
     }
@@ -241,6 +271,9 @@ contract BaseRegistrarImplementation is
         emit BaseURIChanged(baseURI);
     }
 
+    /**
+     * @dev Return the metadata URI by token ID
+     */
     function tokenURI(uint256 tokenId)
         public
         view
@@ -261,6 +294,9 @@ contract BaseRegistrarImplementation is
         return tokens.length;
     }
 
+    /**
+     * @dev Get token ID by stored order
+     */
     function tokenByIndex(uint256 _index)
         external
         view
