@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.4;
 
-import "../registry/MID.sol";
+import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/IERC721Enumerable.sol";
 import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
+import "../registry/MID.sol";
 import "./BaseRegistrar.sol";
 import "./ReservedIDRegistrar.sol";
 
@@ -223,6 +224,9 @@ contract BaseRegistrarImplementation is
             "timestamp overflow"
         ); // Prevent future overflow
 
+        // balance check
+        require(balanceOf(owner) < maxMintPerUser, "balance exceeds cap");
+
         expiries[id] = block.timestamp + duration;
         if (_exists(id)) {
             // Name was previously owned, and expired
@@ -390,22 +394,6 @@ contract BaseRegistrarImplementation is
         require(cap > 0, "invalid mint cap");
         maxMintPerUser = cap;
         emit MaxMintCapChanged(cap);
-    }
-    
-    /**
-     * @dev _afterTokenTransfer hook will be called after transfering and minting
-     */
-    function _afterTokenTransfer(
-        address from,
-        address to,
-        uint256 firstTokenId,
-        uint256 batchSize
-    ) internal virtual override(ERC721) {
-        super._afterTokenTransfer(from, to, firstTokenId, batchSize);
-        // when it's a burn action, to is zero address
-        if (to != address(0)) {
-            require(balanceOf(to) <= maxMintPerUser, "balance exceeds cap");
-        }
     }
 
     function supportsInterface(bytes4 interfaceID)

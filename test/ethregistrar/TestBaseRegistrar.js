@@ -159,12 +159,9 @@ contract('BaseRegistrar', function (accounts) {
 		);
 		await registrar.register(sha3("newname333"), otherAccount, 86400, {from: controllerAccount});
 		
-		// transfer should be prevented as well
-		await expect(registrar.transferFrom(otherAccount, anotherAccount, sha3("newname333"), {from: otherAccount})).to.be.revertedWith(
-			'balance exceeds cap',
-		);
+		// transfer should be good
+		await registrar.transferFrom(otherAccount, anotherAccount, sha3("newname333"), {from: otherAccount});
 		await registrar.transferFrom(anotherAccount, controllerAccount, sha3("newname11"), {from: anotherAccount})
-		await registrar.transferFrom(otherAccount, anotherAccount, sha3("newname333"), {from: otherAccount}) // ok
 	});
 
 	it('test token id reservation', async function () {
