@@ -35,7 +35,7 @@ contract BaseRegistrarImplementation is
     /**
      * @dev The max minting count per account
      */
-    uint256 public maxMintPerUser;
+    uint256 public maxMintPerUser = 10e18;
 
     /**
      * @dev mapping from token id to index in tokens array

@@ -1,0 +1,134 @@
+{
+  "address": "0xE6A0bCf0952bAb28d006D910bFF7AFdc79EbA861",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "nameExpires",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "expiry",
+          "type": "uint256"
+        }
+      ],
+      "name": "setNameExpires",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "name_",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "expiry",
+          "type": "uint256"
+        }
+      ],
+      "name": "setNameExpiresByLabelName",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x070e94e69446e990809bc94ce298de391667cb292949c416fefde8af1551ac54",
+  "receipt": {
+    "to": null,
+    "from": "0xC04F124220694a2994b8C47D7adC43419B036293",
+    "contractAddress": "0xE6A0bCf0952bAb28d006D910bFF7AFdc79EbA861",
+    "transactionIndex": 7,
+    "gasUsed": "252458",
+    "logsBloom": "0x00000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000800000000000000000000100000000000000000000000000000000000000000000000000000000000080400000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000020000000000000000001000000000000000000000000004000000000000000000001000000000000000000000000000000100000000100000000000000000000000100000000000000000000000000000000000000100000",
+    "blockHash": "0xe5ae932bdacc56a50e86deb3a7af07100287397541e809804c2210d29d0f629d",
+    "transactionHash": "0x070e94e69446e990809bc94ce298de391667cb292949c416fefde8af1551ac54",
+    "logs": [
+      {
+        "transactionIndex": 7,
+        "blockNumber": 30856779,
+        "transactionHash": "0x070e94e69446e990809bc94ce298de391667cb292949c416fefde8af1551ac54",
+        "address": "0x0000000000000000000000000000000000001010",
+        "topics": [
+          "0x4dfe1bbbcf077ddc3e01291eea2d5c70c2b422b415d95645b9adcfd678cb1d63",
+          "0x0000000000000000000000000000000000000000000000000000000000001010",
+          "0x000000000000000000000000c04f124220694a2994b8c47d7adc43419b036293",
+          "0x000000000000000000000000c26880a0af2ea0c7e8130e6ec47af756465452e8"
+        ],
+        "data": "0x00000000000000000000000000000000000000000000000000015869f01db6000000000000000000000000000000000000000000000000000b0ec08ccaca47c50000000000000000000000000000000000000000000018e131515d013f8ce0470000000000000000000000000000000000000000000000000b0d6822daac91c50000000000000000000000000000000000000000000018e13152b56b2faa9647",
+        "logIndex": 30,
+        "blockHash": "0xe5ae932bdacc56a50e86deb3a7af07100287397541e809804c2210d29d0f629d"
+      }
+    ],
+    "blockNumber": 30856779,
+    "cumulativeGasUsed": "3622879",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "0f0cf4fc893cd1477127b00cde292b5d",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.4+commit.c7e474f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"}],\"name\":\"nameExpires\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"id\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"expiry\",\"type\":\"uint256\"}],\"name\":\"setNameExpires\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name_\",\"type\":\"string\"},{\"internalType\":\"uint256\",\"name\":\"expiry\",\"type\":\"uint256\"}],\"name\":\"setNameExpiresByLabelName\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/test/DummyMigrationSource.sol\":\"DummySourceBaseRegistrar\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/test/DummyMigrationSource.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity >=0.8.4;\\n\\ncontract DummySourceRegistry {\\n    // namehash('bnb')\\n    bytes32 constant private BASE_NODE = 0xdba5666821b22671387fe7ea11d7cc41ede85a5aa67c3e7b3d68ce6a661f389c;\\n\\n    struct Record {\\n        address owner;\\n        address resolver;\\n        uint64 ttl;\\n    }\\n\\n    mapping (bytes32 => Record) records;\\n\\n    function setOwnerByLabelName(string memory name_, address owner_) external {\\n        bytes32 label = keccak256(bytes(name_));\\n        bytes32 node = keccak256(abi.encodePacked(BASE_NODE, label));\\n        setOwner(node, owner_);\\n    }\\n\\n    function setOwner(bytes32 node, address owner_) public {\\n        records[node].owner = owner_;\\n    }\\n\\n    function owner(bytes32 node) public view returns (address) {\\n        return records[node].owner;\\n    }\\n}\\n\\n\\ncontract DummySourceBaseRegistrar {\\n    mapping (uint256 => uint256) expiries;\\n\\n    function setNameExpiresByLabelName(string memory name_, uint256 expiry) public {\\n        bytes32 label = keccak256(bytes(name_));\\n        expiries[uint256(label)] = expiry;\\n    } \\n    \\n    function setNameExpires(uint256 id, uint256 expiry) public {\\n        expiries[id] = expiry;\\n    }   \\n    function nameExpires(uint256 id) public view returns (uint256) {\\n        return expiries[id];\\n    }\\n}\",\"keccak256\":\"0xa5dcec8849a5c9f2826f4482cacf3016f9d4bd3bd96d0509d19faca87f041f1a\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5061039d806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c80637be0043b14610046578063b12a6acf14610062578063d6e4fa861461007e575b600080fd5b610060600480360381019061005b919061018d565b6100ae565b005b61007c6004803603810190610077919061020a565b6100d9565b005b610098600480360381019061009391906101e1565b6100f4565b6040516100a59190610255565b60405180910390f35b600082805190602001209050816000808360001c815260200190815260200160002081905550505050565b80600080848152602001908152602001600020819055505050565b6000806000838152602001908152602001600020549050919050565b600061012361011e84610295565b610270565b90508281526020810184848401111561013b57600080fd5b6101468482856102d0565b509392505050565b600082601f83011261015f57600080fd5b813561016f848260208601610110565b91505092915050565b60008135905061018781610350565b92915050565b600080604083850312156101a057600080fd5b600083013567ffffffffffffffff8111156101ba57600080fd5b6101c68582860161014e565b92505060206101d785828601610178565b9150509250929050565b6000602082840312156101f357600080fd5b600061020184828501610178565b91505092915050565b6000806040838503121561021d57600080fd5b600061022b85828601610178565b925050602061023c85828601610178565b9150509250929050565b61024f816102c6565b82525050565b600060208201905061026a6000830184610246565b92915050565b600061027a61028b565b905061028682826102df565b919050565b6000604051905090565b600067ffffffffffffffff8211156102b0576102af610310565b5b6102b98261033f565b9050602081019050919050565b6000819050919050565b82818337600083830152505050565b6102e88261033f565b810181811067ffffffffffffffff8211171561030757610306610310565b5b80604052505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b6000601f19601f8301169050919050565b610359816102c6565b811461036457600080fd5b5056fea26469706673582212204a0cc3361d3df41381d90e22dc5c264fdc48bd69abba76eb4c8d68e8208e290164736f6c63430008040033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100415760003560e01c80637be0043b14610046578063b12a6acf14610062578063d6e4fa861461007e575b600080fd5b610060600480360381019061005b919061018d565b6100ae565b005b61007c6004803603810190610077919061020a565b6100d9565b005b610098600480360381019061009391906101e1565b6100f4565b6040516100a59190610255565b60405180910390f35b600082805190602001209050816000808360001c815260200190815260200160002081905550505050565b80600080848152602001908152602001600020819055505050565b6000806000838152602001908152602001600020549050919050565b600061012361011e84610295565b610270565b90508281526020810184848401111561013b57600080fd5b6101468482856102d0565b509392505050565b600082601f83011261015f57600080fd5b813561016f848260208601610110565b91505092915050565b60008135905061018781610350565b92915050565b600080604083850312156101a057600080fd5b600083013567ffffffffffffffff8111156101ba57600080fd5b6101c68582860161014e565b92505060206101d785828601610178565b9150509250929050565b6000602082840312156101f357600080fd5b600061020184828501610178565b91505092915050565b6000806040838503121561021d57600080fd5b600061022b85828601610178565b925050602061023c85828601610178565b9150509250929050565b61024f816102c6565b82525050565b600060208201905061026a6000830184610246565b92915050565b600061027a61028b565b905061028682826102df565b919050565b6000604051905090565b600067ffffffffffffffff8211156102b0576102af610310565b5b6102b98261033f565b9050602081019050919050565b6000819050919050565b82818337600083830152505050565b6102e88261033f565b810181811067ffffffffffffffff8211171561030757610306610310565b5b80604052505050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b6000601f19601f8301169050919050565b610359816102c6565b811461036457600080fd5b5056fea26469706673582212204a0cc3361d3df41381d90e22dc5c264fdc48bd69abba76eb4c8d68e8208e290164736f6c63430008040033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 81,
+        "contract": "contracts/test/DummyMigrationSource.sol:DummySourceBaseRegistrar",
+        "label": "expiries",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_uint256,t_uint256)"
+      }
+    ],
+    "types": {
+      "t_mapping(t_uint256,t_uint256)": {
+        "encoding": "mapping",
+        "key": "t_uint256",
+        "label": "mapping(uint256 => uint256)",
+        "numberOfBytes": "32",
+        "value": "t_uint256"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

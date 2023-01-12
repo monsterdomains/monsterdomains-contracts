@@ -1,0 +1,175 @@
+{
+  "address": "0x1a15CC7E0B5BD1a3914884c26d1088Af34e6d14F",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        }
+      ],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "owner_",
+          "type": "address"
+        }
+      ],
+      "name": "setOwner",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "name_",
+          "type": "string"
+        },
+        {
+          "internalType": "address",
+          "name": "owner_",
+          "type": "address"
+        }
+      ],
+      "name": "setOwnerByLabelName",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x1982ddfa057b4d86915b2a98e8272e9956554ba05c43606babddb940ee6c4e80",
+  "receipt": {
+    "to": null,
+    "from": "0xC04F124220694a2994b8C47D7adC43419B036293",
+    "contractAddress": "0x1a15CC7E0B5BD1a3914884c26d1088Af34e6d14F",
+    "transactionIndex": 3,
+    "gasUsed": "324106",
+    "logsBloom": "0x00000000000000020000000000000000000000000000000000000000000000000000000000000000000000000000000000008000000000000000000000000000000000000000000000000000000000800000000000000000000100000000000000000000000000000000000000000000000000000000000080400000000000000000000000000000000000000000000000000000000000000000000000000000200000000000000020000000000000000001000000000000000000000000004000000000000000000001000000000000000000000000000000100000000100000000000000000000000100000000000000000000000000000000000000100000",
+    "blockHash": "0xa6fe998e7b97545f3276a645aa4b7ab88ca7d9ecfe3d35f4f381736c91009949",
+    "transactionHash": "0x1982ddfa057b4d86915b2a98e8272e9956554ba05c43606babddb940ee6c4e80",
+    "logs": [
+      {
+        "transactionIndex": 3,
+        "blockNumber": 30856775,
+        "transactionHash": "0x1982ddfa057b4d86915b2a98e8272e9956554ba05c43606babddb940ee6c4e80",
+        "address": "0x0000000000000000000000000000000000001010",
+        "topics": [
+          "0x4dfe1bbbcf077ddc3e01291eea2d5c70c2b422b415d95645b9adcfd678cb1d63",
+          "0x0000000000000000000000000000000000000000000000000000000000001010",
+          "0x000000000000000000000000c04f124220694a2994b8c47d7adc43419b036293",
+          "0x000000000000000000000000c26880a0af2ea0c7e8130e6ec47af756465452e8"
+        ],
+        "data": "0x0000000000000000000000000000000000000000000000000001ba28b67fd6000000000000000000000000000000000000000000000000000b107ab581993e650000000000000000000000000000000000000000000018e12f2779ffd3c314570000000000000000000000000000000000000000000000000b0ec08ccb1968650000000000000000000000000000000000000000000018e12f2934288a42ea57",
+        "logIndex": 7,
+        "blockHash": "0xa6fe998e7b97545f3276a645aa4b7ab88ca7d9ecfe3d35f4f381736c91009949"
+      }
+    ],
+    "blockNumber": 30856775,
+    "cumulativeGasUsed": "4544847",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 1,
+  "solcInputHash": "0f0cf4fc893cd1477127b00cde292b5d",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.4+commit.c7e474f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"}],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"node\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"owner_\",\"type\":\"address\"}],\"name\":\"setOwner\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"name_\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"owner_\",\"type\":\"address\"}],\"name\":\"setOwnerByLabelName\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/test/DummyMigrationSource.sol\":\"DummySourceRegistry\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"contracts/test/DummyMigrationSource.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity >=0.8.4;\\n\\ncontract DummySourceRegistry {\\n    // namehash('bnb')\\n    bytes32 constant private BASE_NODE = 0xdba5666821b22671387fe7ea11d7cc41ede85a5aa67c3e7b3d68ce6a661f389c;\\n\\n    struct Record {\\n        address owner;\\n        address resolver;\\n        uint64 ttl;\\n    }\\n\\n    mapping (bytes32 => Record) records;\\n\\n    function setOwnerByLabelName(string memory name_, address owner_) external {\\n        bytes32 label = keccak256(bytes(name_));\\n        bytes32 node = keccak256(abi.encodePacked(BASE_NODE, label));\\n        setOwner(node, owner_);\\n    }\\n\\n    function setOwner(bytes32 node, address owner_) public {\\n        records[node].owner = owner_;\\n    }\\n\\n    function owner(bytes32 node) public view returns (address) {\\n        return records[node].owner;\\n    }\\n}\\n\\n\\ncontract DummySourceBaseRegistrar {\\n    mapping (uint256 => uint256) expiries;\\n\\n    function setNameExpiresByLabelName(string memory name_, uint256 expiry) public {\\n        bytes32 label = keccak256(bytes(name_));\\n        expiries[uint256(label)] = expiry;\\n    } \\n    \\n    function setNameExpires(uint256 id, uint256 expiry) public {\\n        expiries[id] = expiry;\\n    }   \\n    function nameExpires(uint256 id) public view returns (uint256) {\\n        return expiries[id];\\n    }\\n}\",\"keccak256\":\"0xa5dcec8849a5c9f2826f4482cacf3016f9d4bd3bd96d0509d19faca87f041f1a\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b506104e9806100206000396000f3fe608060405234801561001057600080fd5b50600436106100415760003560e01c806302571be3146100465780635b0fc9c314610076578063b47ed0ab14610092575b600080fd5b610060600480360381019061005b9190610243565b6100ae565b60405161006d919061034e565b60405180910390f35b610090600480360381019061008b919061026c565b6100ed565b005b6100ac60048036038101906100a791906102a8565b610145565b005b600080600083815260200190815260200160002060000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050919050565b8060008084815260200190815260200160002060000160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505050565b60008280519060200120905060007fdba5666821b22671387fe7ea11d7cc41ede85a5aa67c3e7b3d68ce6a661f389c60001b82604051602001610189929190610322565b6040516020818303038152906040528051906020012090506101ab81846100ed565b50505050565b60006101c46101bf8461038e565b610369565b9050828152602081018484840111156101dc57600080fd5b6101e78482856103fb565b509392505050565b6000813590506101fe81610485565b92915050565b6000813590506102138161049c565b92915050565b600082601f83011261022a57600080fd5b813561023a8482602086016101b1565b91505092915050565b60006020828403121561025557600080fd5b600061026384828501610204565b91505092915050565b6000806040838503121561027f57600080fd5b600061028d85828601610204565b925050602061029e858286016101ef565b9150509250929050565b600080604083850312156102bb57600080fd5b600083013567ffffffffffffffff8111156102d557600080fd5b6102e185828601610219565b92505060206102f2858286016101ef565b9150509250929050565b610305816103bf565b82525050565b61031c610317826103d1565b61043b565b82525050565b600061032e828561030b565b60208201915061033e828461030b565b6020820191508190509392505050565b600060208201905061036360008301846102fc565b92915050565b6000610373610384565b905061037f828261040a565b919050565b6000604051905090565b600067ffffffffffffffff8211156103a9576103a8610445565b5b6103b282610474565b9050602081019050919050565b60006103ca826103db565b9050919050565b6000819050919050565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b82818337600083830152505050565b61041382610474565b810181811067ffffffffffffffff8211171561043257610431610445565b5b80604052505050565b6000819050919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b6000601f19601f8301169050919050565b61048e816103bf565b811461049957600080fd5b50565b6104a5816103d1565b81146104b057600080fd5b5056fea2646970667358221220f6f2d7a5d421f670792a45d93945757069316e4014c8aa6f055e65611d5f094064736f6c63430008040033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100415760003560e01c806302571be3146100465780635b0fc9c314610076578063b47ed0ab14610092575b600080fd5b610060600480360381019061005b9190610243565b6100ae565b60405161006d919061034e565b60405180910390f35b610090600480360381019061008b919061026c565b6100ed565b005b6100ac60048036038101906100a791906102a8565b610145565b005b600080600083815260200190815260200160002060000160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050919050565b8060008084815260200190815260200160002060000160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505050565b60008280519060200120905060007fdba5666821b22671387fe7ea11d7cc41ede85a5aa67c3e7b3d68ce6a661f389c60001b82604051602001610189929190610322565b6040516020818303038152906040528051906020012090506101ab81846100ed565b50505050565b60006101c46101bf8461038e565b610369565b9050828152602081018484840111156101dc57600080fd5b6101e78482856103fb565b509392505050565b6000813590506101fe81610485565b92915050565b6000813590506102138161049c565b92915050565b600082601f83011261022a57600080fd5b813561023a8482602086016101b1565b91505092915050565b60006020828403121561025557600080fd5b600061026384828501610204565b91505092915050565b6000806040838503121561027f57600080fd5b600061028d85828601610204565b925050602061029e858286016101ef565b9150509250929050565b600080604083850312156102bb57600080fd5b600083013567ffffffffffffffff8111156102d557600080fd5b6102e185828601610219565b92505060206102f2858286016101ef565b9150509250929050565b610305816103bf565b82525050565b61031c610317826103d1565b61043b565b82525050565b600061032e828561030b565b60208201915061033e828461030b565b6020820191508190509392505050565b600060208201905061036360008301846102fc565b92915050565b6000610373610384565b905061037f828261040a565b919050565b6000604051905090565b600067ffffffffffffffff8211156103a9576103a8610445565b5b6103b282610474565b9050602081019050919050565b60006103ca826103db565b9050919050565b6000819050919050565b600073ffffffffffffffffffffffffffffffffffffffff82169050919050565b82818337600083830152505050565b61041382610474565b810181811067ffffffffffffffff8211171561043257610431610445565b5b80604052505050565b6000819050919050565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b6000601f19601f8301169050919050565b61048e816103bf565b811461049957600080fd5b50565b6104a5816103d1565b81146104b057600080fd5b5056fea2646970667358221220f6f2d7a5d421f670792a45d93945757069316e4014c8aa6f055e65611d5f094064736f6c63430008040033",
+  "devdoc": {
+    "kind": "dev",
+    "methods": {},
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {},
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 16,
+        "contract": "contracts/test/DummyMigrationSource.sol:DummySourceRegistry",
+        "label": "records",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_bytes32,t_struct(Record)11_storage)"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_mapping(t_bytes32,t_struct(Record)11_storage)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => struct DummySourceRegistry.Record)",
+        "numberOfBytes": "32",
+        "value": "t_struct(Record)11_storage"
+      },
+      "t_struct(Record)11_storage": {
+        "encoding": "inplace",
+        "label": "struct DummySourceRegistry.Record",
+        "members": [
+          {
+            "astId": 6,
+            "contract": "contracts/test/DummyMigrationSource.sol:DummySourceRegistry",
+            "label": "owner",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address"
+          },
+          {
+            "astId": 8,
+            "contract": "contracts/test/DummyMigrationSource.sol:DummySourceRegistry",
+            "label": "resolver",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address"
+          },
+          {
+            "astId": 10,
+            "contract": "contracts/test/DummyMigrationSource.sol:DummySourceRegistry",
+            "label": "ttl",
+            "offset": 20,
+            "slot": "1",
+            "type": "t_uint64"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_uint64": {
+        "encoding": "inplace",
+        "label": "uint64",
+        "numberOfBytes": "8"
+      }
+    }
+  }
+}
