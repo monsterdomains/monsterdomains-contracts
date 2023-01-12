@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.4;
 
-import "./PriceOracle.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "../oracles/PriceOracle.sol";
 import "./BaseRegistrarImplementation.sol";
 import "./StringUtils.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
 import "../resolvers/Resolver.sol";
 import "./IMIDRegistrarController.sol";
 

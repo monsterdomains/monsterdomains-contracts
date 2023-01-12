@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.4;
 
-import "./PriceOracle.sol";
-import "./StringUtils.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "./PriceOracle.sol";
+import "../cidregistrar/StringUtils.sol";
 
 interface AggregatorInterface {
   function latestAnswer() external view returns (int256);

@@ -3,7 +3,7 @@ pragma solidity >=0.8.4;
 
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./PriceOracle.sol";
+import "../oracles/PriceOracle.sol";
 import "./BaseRegistrarImplementation.sol";
 import "../resolvers/Resolver.sol";
 import "./StringUtils.sol";

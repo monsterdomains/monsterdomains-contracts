@@ -5,6 +5,11 @@ pragma solidity >=0.8.4;
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 
+struct ReservedDomain {
+    uint256 id;
+    string labelName;
+}
+
 /**
  * To make some domains reserved for future usage
  */
@@ -23,7 +28,7 @@ contract ReservedIDRegistrar is Ownable {
     /**
      * @dev For iterate token ids
      */
-    uint256[] public reservedTokenIds;
+    ReservedDomain[] public reservedTokenIds;
 
     event ReservedTokenAdded(uint256 indexed count);
     event ReservedNameRegistrarChanged(address indexed registrar);
@@ -31,12 +36,17 @@ contract ReservedIDRegistrar is Ownable {
     /**
      * @dev Some names are reserved for special purposes 
      */
-    function addReservedTokenId(uint256[] memory ids) onlyOwner external {
-        for (uint256 i = 0; i < ids.length; ++i) {
-            reservedTokenIdMap.set(ids[i]);
-            reservedTokenIds.push(ids[i]);
+    function addReservedLabelNames(string[] memory labelNames) onlyOwner external {
+        for (uint256 i = 0; i < labelNames.length; ++i) {
+            bytes32 label = keccak256(bytes(labelNames[i]));
+            uint256 id = uint256(label);
+            reservedTokenIdMap.set(id);
+            reservedTokenIds.push(ReservedDomain({
+                id: id,
+                labelName: labelNames[i]
+            }));
         }
-        emit ReservedTokenAdded(ids.length);
+        emit ReservedTokenAdded(labelNames.length);
     }
 
     function isTokenIdReserved(uint256 id) public view returns (bool) {
