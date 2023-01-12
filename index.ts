@@ -15,6 +15,7 @@ export * from './src/types';
 import BaseRegistrarImplementation80001 from './deployments/mumbai/BaseRegistrarImplementation.json';
 import DefaultReverseResolver80001 from './deployments/mumbai/DefaultReverseResolver.json';
 import MIDRegistrarController80001 from './deployments/mumbai/MIDRegistrarController.json';
+import MIDRegistrarMigrationController80001 from './deployments/mumbai/MIDRegistrarMigrationController.json';
 import MIDRegistry80001 from './deployments/mumbai/MIDRegistry.json';
 import PublicResolver80001 from './deployments/mumbai/PublicResolver.json';
 import ReverseRegistrar80001 from './deployments/mumbai/ReverseRegistrar.json';
@@ -85,6 +86,13 @@ export const deployments = {
     address: {
       // 97: BulkRenewal97.address,
       80001: BulkRenewal80001.address,
+    }
+  },
+  MIDRegistrarMigrationController80001: {
+    abi: MIDRegistrarMigrationController80001.abi,
+    address: {
+      // 97: BulkRenewal97.address,
+      80001: MIDRegistrarMigrationController80001.address,
     }
   }
 }
