@@ -88,7 +88,7 @@ export const deployments = {
       80001: BulkRenewal80001.address,
     }
   },
-  MIDRegistrarMigrationController80001: {
+  MIDRegistrarMigrationController: {
     abi: MIDRegistrarMigrationController80001.abi,
     address: {
       // 97: BulkRenewal97.address,

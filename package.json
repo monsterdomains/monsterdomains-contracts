@@ -1,6 +1,6 @@
 {
   "name": "@monsterdomains/mid-contracts",
-  "version": "0.0.1-alpha.25",
+  "version": "0.0.1-alpha.26",
   "description": "Monster domain contracts",
   "scripts": {
     "test": "npx hardhat test",
