@@ -12,10 +12,18 @@ contract DummySourceRegistry {
     }
 
     mapping (bytes32 => Record) records;
+    mapping (address => string[]) ownerNames;
 
+    // this is for testnet only
+    function getNamesByAddress(address owner_) external view returns (string[] memory) {
+        return ownerNames[owner_];
+    }
+
+    // this is for testnet only
     function setOwnerByLabelName(string memory name_, address owner_) external {
         bytes32 label = keccak256(bytes(name_));
         bytes32 node = keccak256(abi.encodePacked(BASE_NODE, label));
+        ownerNames[owner_].push(name_);
         setOwner(node, owner_);
     }
 
@@ -32,6 +40,7 @@ contract DummySourceRegistry {
 contract DummySourceBaseRegistrar {
     mapping (uint256 => uint256) expiries;
 
+    // this is for testnet only
     function setNameExpiresByLabelName(string memory name_, uint256 expiry) public {
         bytes32 label = keccak256(bytes(name_));
         expiries[uint256(label)] = expiry;

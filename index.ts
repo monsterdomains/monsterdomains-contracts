@@ -22,6 +22,10 @@ import ReverseRegistrar80001 from './deployments/mumbai/ReverseRegistrar.json';
 import Root80001 from './deployments/mumbai/Root.json';
 import StablePriceOracle80001 from './deployments/mumbai/StablePriceOracle.json';
 import BulkRenewal80001 from './deployments/mumbai/BulkRenewal.json';
+import DummySourceBaseRegistrar80001 from './deployments/mumbai/DummySourceBaseRegistrar.json';
+import DummySourceRegistry80001 from './deployments/mumbai/DummySourceRegistry.json';
+
+
 
 
 export const deployments = {
@@ -94,5 +98,19 @@ export const deployments = {
       // 97: BulkRenewal97.address,
       80001: MIDRegistrarMigrationController80001.address,
     }
-  }
+  },
+  DummySourceBaseRegistrar: {
+    abi: DummySourceBaseRegistrar80001.abi,
+    address: {
+      // 97: BulkRenewal97.address,
+      80001: DummySourceBaseRegistrar80001.address,
+    }
+  },
+  DummySourceRegistry: {
+    abi: DummySourceRegistry80001.abi,
+    address: {
+      // 97: BulkRenewal97.address,
+      80001: DummySourceRegistry80001.address,
+    }
+  },
 }
