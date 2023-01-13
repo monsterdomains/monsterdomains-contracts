@@ -42,7 +42,7 @@ contract MIDRegistrarController is Ownable, IMIDRegistrarController {
         maxCommitmentAge = _maxCommitmentAge;
     }
 
-    function setTreasury(address treasury_) external {
+    function setTreasury(address treasury_) external onlyOwner {
         require(treasury_ != address(0), "treasury can't be zero address");
         treasury = treasury_;
     }
