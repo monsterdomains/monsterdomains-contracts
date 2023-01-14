@@ -171,7 +171,8 @@ contract('BaseRegistrar', function (accounts) {
 		);
 
 		await registrar.addReservedLabelNames(["reservedname1", "reservedname2"]);
-		console.log(await registrar.getReservedDomains())
+		const domains = await registrar.getReservedDomains()
+		expect(domains.map(d => d.labelname)).deep.equal(["reservedname1", "reservedname2"])
 		await expect(registrar.register(sha3("reservedname1"), otherAccount, 86400, {from: controllerAccount})).to.be.revertedWith(
 			'reserved token id',
 		);
