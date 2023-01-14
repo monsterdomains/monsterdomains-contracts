@@ -171,6 +171,7 @@ contract('BaseRegistrar', function (accounts) {
 		);
 
 		await registrar.addReservedLabelNames(["reservedname1", "reservedname2"]);
+		console.log(await registrar.getReservedDomains())
 		await expect(registrar.register(sha3("reservedname1"), otherAccount, 86400, {from: controllerAccount})).to.be.revertedWith(
 			'reserved token id',
 		);
@@ -183,6 +184,5 @@ contract('BaseRegistrar', function (accounts) {
 		await registrar.setReservedIDRegistrar(anotherAccount);
 		registrar.register(sha3("reservedname1"), otherAccount, 86400, {from: anotherAccount})
 		registrar.register(sha3("reservedname2"), otherAccount, 86400, {from: anotherAccount})
-			
 	})
 });

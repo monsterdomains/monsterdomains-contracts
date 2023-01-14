@@ -49,6 +49,13 @@ contract ReservedIDRegistrar is Ownable {
         emit ReservedTokenAdded(labelNames.length);
     }
 
+    function getReservedDomains() external view returns (ReservedDomain[] memory results) {
+        results = new ReservedDomain[](reservedTokenIds.length);
+        for (uint256 i = 0; i < reservedTokenIds.length; ++i) {
+            results[i] = reservedTokenIds[i];
+        }
+    }
+
     function isTokenIdReserved(uint256 id) public view returns (bool) {
         return reservedTokenIdMap.get(id);
     }
