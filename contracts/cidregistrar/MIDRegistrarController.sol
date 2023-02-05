@@ -25,7 +25,7 @@ contract MIDRegistrarController is Ownable, IMIDRegistrarController {
     uint public minCommitmentAge;
     uint public maxCommitmentAge;
 
-    mapping(bytes32=>uint) public commitments;
+    mapping(bytes32 => uint) public commitments;
 
     address public treasury;
 
@@ -83,7 +83,7 @@ contract MIDRegistrarController is Ownable, IMIDRegistrarController {
       registerWithConfig(name, owner, duration, secret, address(0), address(0));
     }
 
-    function registerWithConfig(string memory name, address owner, uint duration, bytes32 secret, address resolver, address addr) public payable override {
+    function registerWithConfig(string memory name, address owner, uint duration, bytes32 secret, address resolver, address addr) public payable virtual override {
         bytes32 commitment = makeCommitmentWithConfig(name, owner, secret, resolver, addr);
         uint cost = _consumeCommitment(name, duration, commitment);
 

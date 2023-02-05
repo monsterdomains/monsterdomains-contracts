@@ -8,14 +8,12 @@ import "@openzeppelin/contracts/utils/Strings.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "../registry/MID.sol";
 import "./BaseRegistrar.sol";
-import "./ReservedIDRegistrar.sol";
 
 contract BaseRegistrarImplementation is
     Pausable,
     ERC721,
     IERC721Enumerable,
-    BaseRegistrar,
-    ReservedIDRegistrar
+    BaseRegistrar
 {
     /**
      * @dev A map of expiry times
@@ -215,9 +213,6 @@ contract BaseRegistrarImplementation is
         bool updateRegistry
     ) internal live onlyController whenNotPaused returns (uint256) {
         require(available(id), "not available");
-        if (isTokenIdReserved(id) && !canRegisterReservedId(msg.sender)) {
-            revert("reserved token id");
-        }
         require(
             block.timestamp + duration + gracePeriod >
                 block.timestamp + gracePeriod,
