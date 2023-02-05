@@ -21,30 +21,41 @@ contract Wishlist is Ownable, IWishlist {
     uint256 public wishPhraseStart;
     uint256 public wishPhraseEnd;
 
-    modifier duringWishPhrase() {
-        require(block.timestamp > wishPhraseStart && block.timestamp < wishPhraseEnd, "not wishlist phrase");
-        _;
-    }
-
     constructor(uint256 wishCap_, uint256 wishPhraseStart_, uint256 wishPhraseEnd_, bytes32 baseNode_) {
-        initialize(wishCap_, wishPhraseStart_, wishPhraseEnd_, baseNode_);
+        setWishCap(wishCap_);
+        setWishPhraseTime(wishPhraseStart_, wishPhraseEnd_);
+        setBaseNode(baseNode_);
     }
 
-    function initialize(uint256 wishCap_, uint256 wishPhraseStart_, uint256 wishPhraseEnd_, bytes32 baseNode_) public onlyOwner {
-        require(wishCap_ > 0 && wishPhraseStart_ > 0 && wishPhraseStart_ < wishPhraseEnd_, "invalid parameters");
+    function setWishCap(uint256 wishCap_) public onlyOwner {
+        require(wishCap_ > 0, "invalid parameters");
         wishCap = wishCap_;
+    }
+
+    function setWishPhraseTime(uint256 wishPhraseStart_, uint256 wishPhraseEnd_) public onlyOwner {
+        require(wishPhraseStart_ > 0 && wishPhraseStart_ < wishPhraseEnd_, "invalid parameters");
         wishPhraseStart = wishPhraseStart_;
         wishPhraseEnd = wishPhraseEnd_;
+    }
+
+    function setBaseNode(bytes32 baseNode_) public onlyOwner {
+        require(baseNode_ != bytes32(0), "invalid parameters");
         baseNode = baseNode_;
     }
 
+    function blocktime() public view returns (uint) {
+        return block.timestamp;
+    } 
+
     // note: name is label name without suffix
-    function addWish(string memory name) duringWishPhrase override external {
+    function addWish(string memory name) override external {
+        require(block.timestamp > wishPhraseStart && block.timestamp < wishPhraseEnd, "not wishlist phrase");
+
         // empty name not allowed
         require(name.strlen() > 0, "empty name");
 
         bytes32 namehash = keccak256(bytes(name));
-        require(wishCounts[namehash] < wishCap, "exceed wish cap");
+        require(wishes[msg.sender].length < wishCap, "exceed wish cap");
 
         // duplicated wish is not allowed
         string[] storage names = wishes[msg.sender];

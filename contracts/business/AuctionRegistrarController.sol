@@ -11,7 +11,7 @@ import "./IWishlist.sol";
 /**
  * To make some domains reserved for future usage
  */
-contract ReservationRegistrarController is MIDRegistrarController {
+contract AuctionRegistrarController is MIDRegistrarController {
     using StringUtils for *;
 
     bytes32 public baseNode;
@@ -22,26 +22,26 @@ contract ReservationRegistrarController is MIDRegistrarController {
     // wishlist contract
     IWishlist public wishlist;
 
-    // reservation period, out of which we    
-    uint256 public reservationPhraseStart;
-    uint256 public reservationPhraseEnd;
+    // auction period, out of which we    
+    uint256 public auctionPhraseStart;
+    uint256 public auctionPhraseEnd;
 
     event ReservedTokenAdded(uint256 indexed count);
 
     constructor(
         address wishlist_,
         bytes32 baseNode_,
-        uint256 reservationPhraseStart_,
-        uint256 reservationPhraseEnd_,
+        uint256 auctionPhraseStart_,
+        uint256 auctionPhraseEnd_,
         // parent initial parameters
-        BaseRegistrarImplementation base_, 
+        BaseRegistrarImplementation base_,
         PriceOracle prices_, 
         uint minCommitmentAge_, 
         uint maxCommitmentAge_
     ) MIDRegistrarController(base_, prices_, minCommitmentAge_, maxCommitmentAge_) {
         setBaseNode(baseNode_);
         setWishlist(wishlist_);
-        setReservationPhraseTime(reservationPhraseStart_, reservationPhraseEnd_);
+        setAuctionPhraseTime(auctionPhraseStart_, auctionPhraseEnd_);
     }
 
     function setBaseNode(bytes32 baseNode_) public onlyOwner {
@@ -56,21 +56,20 @@ contract ReservationRegistrarController is MIDRegistrarController {
         require(wishlist.baseNode() == baseNode, "wrong wishlist");
     }
 
-    function setReservationPhraseTime(uint256 reservationPhraseStart_, uint256 reservationPhraseEnd_) public onlyOwner {
-        require(reservationPhraseStart_ > 0 && reservationPhraseStart_ < reservationPhraseEnd_, "invalid parameters");
-        reservationPhraseStart = reservationPhraseStart_;
-        reservationPhraseEnd = reservationPhraseEnd_;
+    function setAuctionPhraseTime(uint256 auctionPhraseStart_, uint256 auctionPhraseEnd_) public onlyOwner {
+        require(auctionPhraseStart_ > 0 && auctionPhraseStart_ < auctionPhraseEnd_, "invalid parameters");
+        auctionPhraseStart = auctionPhraseStart_;
+        auctionPhraseEnd = auctionPhraseEnd_;
     }
-    
 
-    function isReservationAlive() public view returns (bool) {
-        return block.timestamp > reservationPhraseStart && block.timestamp < reservationPhraseEnd;
+    function isAuctionAlive() public view returns (bool) {
+        return block.timestamp > auctionPhraseStart && block.timestamp < auctionPhraseEnd;
     }
 
     // register a reserved name for a particular user
     // NOTE: name is label name without suffix
     function registerWithConfig(string memory name, address owner, uint duration, bytes32 secret, address resolver, address addr) public payable override {
-        require(isReservationAlive(), "reservation not alive");
+        require(isAuctionAlive(), "auction not alive");
 
         // A name can be registered in reserved phrase when only one user has wished it
         require(wishlist.wishCounts(keccak256(bytes(name))) == 1, "wish count must be 1");
