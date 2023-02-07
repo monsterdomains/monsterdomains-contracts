@@ -43,7 +43,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   // address treasury_,
   // uint256 start_,
   // uint256 end_
-  const now = Math.floor(Date.now() / 1000)
+  const now = 1675743226
   const deployArgs = {
     from: deployer,
     args: [

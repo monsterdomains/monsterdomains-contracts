@@ -104,7 +104,7 @@ describe('TestReserveController', function () {
   });
 
   it('cannot register when not alive', async () => {
-    await wishlist.connect(registrantAccount).addWish('nonono')
+    await wishlist.connect(registrantAccount).addWishes(['nonono'])
     const commitment = await controller.makeCommitment('nonono', registrantAccount.address, secret);
     await controller.commit(commitment);
     await evm.advanceTime((await controller.minCommitmentAge()).toNumber());
@@ -125,13 +125,13 @@ describe('TestReserveController', function () {
     await expect(controller.register('wish', registrantAccount.address, 28 * DAYS, secret, { value: 28 * DAYS + 1 }))
       .to.be.revertedWith('wish count must be 1')
 
-    await wishlist.connect(registrantAccount).addWish('wish')
+    await wishlist.connect(registrantAccount).addWishes(['wish'])
     // OK
     await controller.register('wish', registrantAccount.address, 28 * DAYS, secret, { value: 28 * DAYS + 1 })
   })
 
   it('should permit new registrations', async () => {
-    await wishlist.connect(registrantAccount).addWish('newname')
+    await wishlist.connect(registrantAccount).addWishes(['newname'])
     const commitment = await controller.makeCommitment('newname', registrantAccount.address, secret);
     await controller.commit(commitment);
     expect(await controller.available(keccak256(Buffer.from('available')))).to.be.equal(true);
@@ -149,7 +149,7 @@ describe('TestReserveController', function () {
   });
 
   it('should permit new registrations with config', async () => {
-    await wishlist.connect(registrantAccount).addWish('newconfigname')
+    await wishlist.connect(registrantAccount).addWishes(['newconfigname'])
     const commitment = await controller.makeCommitmentWithConfig('newconfigname', registrantAccount.address, secret, resolver.address, registrantAccount.address);
     await controller.commit(commitment);
 
@@ -173,7 +173,7 @@ describe('TestReserveController', function () {
   });
 
   it('should permit a registration with resolver but not addr', async () => {
-    await wishlist.connect(registrantAccount).addWish('newconfigname2')
+    await wishlist.connect(registrantAccount).addWishes(['newconfigname2'])
 
     const commitment = await controller.makeCommitmentWithConfig('newconfigname2', registrantAccount.address, secret, resolver.address, ethers.constants.AddressZero);
     await controller.commit(commitment);
@@ -193,7 +193,7 @@ describe('TestReserveController', function () {
   });
 
   it('should include the owner in the commitment', async () => {
-    await wishlist.connect(registrantAccount).addWish('newname2')
+    await wishlist.connect(registrantAccount).addWishes(['newname2'])
 
     await controller.commit(await controller.makeCommitment('newname2', signers[2].address, secret));
 

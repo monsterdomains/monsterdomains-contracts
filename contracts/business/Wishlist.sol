@@ -51,10 +51,15 @@ contract Wishlist is Ownable, IWishlist {
         return block.timestamp;
     } 
 
-    // note: name is label name without suffix
-    function addWish(string memory name) override external {
+    function addWishes(string[] memory names) override external {
         require(block.timestamp > wishPhraseStart && block.timestamp < wishPhraseEnd, "not wishlist phrase");
+        for (uint256 i = 0; i < names.length; ++i) {
+            addWish_(names[i]);
+        }
+    }
 
+    // note: name is label name without suffix
+    function addWish_(string memory name) internal {
         // empty name not allowed
         require(name.strlen() > 0, "empty name");
 

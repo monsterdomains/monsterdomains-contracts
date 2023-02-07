@@ -50,20 +50,20 @@ describe('TestWishlist', function () {
     it('basic tests', async function () {
       let ts = Number((await web3.eth.getBlock('latest')).timestamp);
 
-      await expect(wishlist.connect(signers[2]).addWish('haha')).to.be.revertedWith(
+      await expect(wishlist.connect(signers[2]).addWishes(['haha'])).to.be.revertedWith(
         'not wishlist phrase',
       );
 
       await wishlist.connect(signers[0]).setWishCap(2); // ok
       await wishlist.setWishPhraseTime(ts - 10, ts + 10000)
-      await expect(wishlist.connect(signers[1]).addWish('')).to.be.revertedWith(
+      await expect(wishlist.connect(signers[1]).addWishes([''])).to.be.revertedWith(
         'empty name',
       );
 
-      await wishlist.connect(signers[1]).addWish('22')
-      await wishlist.connect(signers[2]).addWish('33')
-      await wishlist.connect(signers[3]).addWish('666')
-      await expect(wishlist.connect(signers[3]).addWish('666')).to.be.revertedWith(
+      await wishlist.connect(signers[1]).addWishes(['22'])
+      await wishlist.connect(signers[2]).addWishes(['33'])
+      await wishlist.connect(signers[3]).addWishes(['666'])
+      await expect(wishlist.connect(signers[3]).addWishes(['666'])).to.be.revertedWith(
         'duplicated wish',
       );
 
@@ -74,16 +74,19 @@ describe('TestWishlist', function () {
     });
 
     it('wish cap', async function () {
-      await wishlist.connect(signers[1]).addWish('5555')
-      await expect(wishlist.connect(signers[1]).addWish('999')).to.be.revertedWith(
+      await wishlist.connect(signers[1]).addWishes(['5555'])
+      await expect(wishlist.connect(signers[1]).addWishes(['999'])).to.be.revertedWith(
+        'exceed wish cap',
+      );
+      await expect(wishlist.connect(signers[5]).addWishes(['9999', '123123', '666'])).to.be.revertedWith(
         'exceed wish cap',
       );
       expect(await wishlist.userWishes(signers[1].address)).deep.equal(['22', '5555'])
     })
 
     it('cross wish', async function () {
-      await wishlist.connect(signers[3]).addWish('5555')
-      await wishlist.connect(signers[2]).addWish('5555')
+      await wishlist.connect(signers[3]).addWishes(['5555'])
+      await wishlist.connect(signers[2]).addWishes(['5555'])
       expect(await wishlist.wishCounts(keccak256(Buffer.from('5555')))).to.be.equal(3)
     })
   })

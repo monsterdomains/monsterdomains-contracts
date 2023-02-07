@@ -9,7 +9,7 @@ interface IWishlist {
 
     function wishCounts(bytes32 namehash) external view returns (uint256);
 
-    function addWish(string memory name) external;
+    function addWishes(string[] memory name) external;
 
     function needAuction(string memory name) external view returns (bool);
 
