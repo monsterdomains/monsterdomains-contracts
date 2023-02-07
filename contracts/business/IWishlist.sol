@@ -16,4 +16,8 @@ interface IWishlist {
     function userWishes(address user) external view returns (string[] memory);
 
     function userHasWish(address user, string memory name) external view returns (bool);
+
+    // Dev side will add some globally reserved domains to let all users be able to join the 
+    // auction for the added domains
+    function addReservedNames(string[] memory names) external;
 }

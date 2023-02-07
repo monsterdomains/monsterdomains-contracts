@@ -13,7 +13,7 @@ const ZERO_HASH =
   '0x0000000000000000000000000000000000000000000000000000000000000000'
 
 
-describe('Test wish list', function () {
+describe('TestWishlist', function () {
   let signers: SignerWithAddress[];
   let wishlist: Wishlist;
 

@@ -21,6 +21,10 @@ contract Wishlist is Ownable, IWishlist {
     uint256 public wishPhraseStart;
     uint256 public wishPhraseEnd;
 
+    // reserved names for global auction, token id => availability
+    mapping (bytes32 => bool) public reservedNameMap;
+    string[] public reservedNames;
+
     constructor(uint256 wishCap_, uint256 wishPhraseStart_, uint256 wishPhraseEnd_, bytes32 baseNode_) {
         setWishCap(wishCap_);
         setWishPhraseTime(wishPhraseStart_, wishPhraseEnd_);
@@ -87,4 +91,14 @@ contract Wishlist is Ownable, IWishlist {
         }
         return false;
     }
+
+    function addReservedNames(string[] memory names) override external onlyOwner {
+        for (uint256 i = 0; i < names.length; ++i) {
+            bytes32 namehash = keccak256(bytes(names[i]));
+            require(!reservedNameMap[namehash], "duplicated name");
+            reservedNameMap[namehash] = true;
+            reservedNames.push(names[i]);
+        }
+    }
+
 }

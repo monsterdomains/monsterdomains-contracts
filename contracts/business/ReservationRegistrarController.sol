@@ -30,7 +30,6 @@ contract ReservationRegistrarController is MIDRegistrarController {
 
     constructor(
         address wishlist_,
-        bytes32 baseNode_,
         uint256 reservationPhraseStart_,
         uint256 reservationPhraseEnd_,
         // parent initial parameters
@@ -39,21 +38,14 @@ contract ReservationRegistrarController is MIDRegistrarController {
         uint minCommitmentAge_, 
         uint maxCommitmentAge_
     ) MIDRegistrarController(base_, prices_, minCommitmentAge_, maxCommitmentAge_) {
-        setBaseNode(baseNode_);
         setWishlist(wishlist_);
         setReservationPhraseTime(reservationPhraseStart_, reservationPhraseEnd_);
-    }
-
-    function setBaseNode(bytes32 baseNode_) public onlyOwner {
-        require(baseNode_ != bytes32(0), "invalid parameters");
-        baseNode = baseNode_;
+        baseNode = base_.baseNode(); 
     }
 
     function setWishlist(address wishlist_) public onlyOwner {
         require(wishlist_ != address(0), "invalid parameters");
         wishlist = IWishlist(wishlist_);
-        // must be for the same root domain
-        require(wishlist.baseNode() == baseNode, "wrong wishlist");
     }
 
     function setReservationPhraseTime(uint256 reservationPhraseStart_, uint256 reservationPhraseEnd_) public onlyOwner {
