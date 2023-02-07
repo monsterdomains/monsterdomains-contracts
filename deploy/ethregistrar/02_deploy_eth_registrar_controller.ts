@@ -16,11 +16,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     'StablePriceOracle',
     owner,
   )
-  const reverseRegistrar = await ethers.getContract('ReverseRegistrar', owner)
+
+  const wishlist = await ethers.getContract('Wishlist', owner)
 
   const deployArgs = {
     from: deployer,
     args: [
+      wishlist.address,
+      1675743226,
+      1675743226 + 86400 * 30,
       registrar.address,
       priceOracle.address,
       15,

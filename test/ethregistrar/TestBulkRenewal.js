@@ -6,6 +6,8 @@ const DummyOracle = artifacts.require('./DummyOracle');
 const StablePriceOracle = artifacts.require('./StablePriceOracle');
 const BulkRenewal = artifacts.require('./BulkRenewal');
 const NameWrapper = artifacts.require('DummyNameWrapper.sol');
+const Wishlist = artifacts.require('./Wishlist.sol');
+
 
 const { Interface } = require('@ethersproject/abi');
 const { makeInterfaceId } = require('@openzeppelin/test-helpers');
@@ -16,6 +18,7 @@ const sha3 = require('web3-utils').sha3;
 const toBN = require('web3-utils').toBN;	
 const { exceptions, evm } = require("../test-utils");
 const { NULL_ADDRESS } = require('../test-utils/address');
+const { ZERO_ADDRESS } = require('@openzeppelin/test-helpers/src/constants');
 
 const BNB_LABEL = sha3('bnb');
 const MID_NAMEHASH = namehash.hash('bnb');
@@ -36,6 +39,7 @@ contract('BulkRenewal', function (accounts) {
 	let priceOracle;
 	let bulkRenewal;
 	let nameWrapper;
+	let wishlist;
 
 	const secret = "0x0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF";
 	const ownerAccount = accounts[0]; // Account that owns the registrar
@@ -53,9 +57,14 @@ contract('BulkRenewal', function (accounts) {
 		await baseRegistrar.setMaxMintPerUser(10);
 
 		// Set up a dummy price oracle and a controller
+		let ts = Number((await web3.eth.getBlock('latest')).timestamp);
+
 		const dummyOracle = await DummyOracle.new(toBN(100000000));
 		priceOracle = await StablePriceOracle.new(dummyOracle.address, [5, 4, 3, 2, 2]);
 		controller = await MIDRegistrarController.new(
+			ZERO_ADDRESS,
+			0, 
+			0, // disable reservation
 			baseRegistrar.address,
 			priceOracle.address,
 			600,
@@ -117,7 +126,7 @@ contract('BulkRenewal', function (accounts) {
 		const commitments = await bulkRenewal.makeBatchCommitmentWithConfig([
 			"newname",
 			"zoo"
-		], 
+		],
 			registrantAccount, secret, 
 			NULL_ADDRESS, NULL_ADDRESS
 		);

@@ -3,17 +3,17 @@ import { BigNumber } from 'ethers';
 import { keccak256, namehash, zeroPad } from 'ethers/lib/utils';
 import { ethers, web3 } from 'hardhat';
 import { expect } from 'chai';
-import { BaseRegistrarImplementation, DummyOracle, MID, MIDRegistrarController, PriceOracle, PublicResolver, ReservationRegistrarController, Wishlist } from 'src/types';
+import { BaseRegistrarImplementation, DummyOracle, MID, MIDRegistrarController, PriceOracle, PublicResolver, Wishlist } from 'src/types';
 const { evm } = require('../test-utils')
 
 const DAYS = 24 * 60 * 60;
 const WISH_CAP = 10; // should be enough for our current test
 
-describe('TestReserveController', function () {
+describe('TestEthRegistrarController', function () {
   let mid: MID;
   let resolver: PublicResolver;
   let baseRegistrar: BaseRegistrarImplementation;
-  let controller: ReservationRegistrarController;
+  let controller: MIDRegistrarController;
   let wishlist: Wishlist;
   let priceOracle: PriceOracle;
   let ownerAccount: SignerWithAddress;
@@ -48,7 +48,7 @@ describe('TestReserveController', function () {
       dummyOracle.address, [1, 1, 1, 1, 1]
     );
 
-    controller = <ReservationRegistrarController>await (await ethers.getContractFactory('ReservationRegistrarController', ownerAccount)).deploy(
+    controller = <MIDRegistrarController>await (await ethers.getContractFactory('MIDRegistrarController', ownerAccount)).deploy(
       wishlist.address,
       ts - 10, 
       ts + 10000,
@@ -104,22 +104,26 @@ describe('TestReserveController', function () {
   });
 
   it('cannot register when not alive', async () => {
-    await wishlist.connect(registrantAccount).addWishes(['nonono'])
     const commitment = await controller.makeCommitment('nonono', registrantAccount.address, secret);
     await controller.commit(commitment);
     await evm.advanceTime((await controller.minCommitmentAge()).toNumber());
     await controller.setReservationPhraseTime(1, 2)
-    await expect(controller.register('nonono', registrantAccount.address, 28 * DAYS, secret, { value: 28 * DAYS + 1 }))
-      .to.be.revertedWith('reservation not alive')
-    
-    await controller.setReservationPhraseTime(1, BigNumber.from(10).pow(18))
+
+    // if reservation not alive, just go with normal register without wished
     await controller.register('nonono', registrantAccount.address, 28 * DAYS, secret, { value: 28 * DAYS + 1 })
+    
+    // now it's alive
+    await controller.setReservationPhraseTime(1, BigNumber.from(10).pow(18))
+    await expect(controller.register('nonono1', registrantAccount.address, 28 * DAYS, secret, { value: 28 * DAYS + 1 }))
+      .to.be.revertedWith('wish count must be 1')
+
+      await wishlist.connect(registrantAccount).addWishes(['nonono1'])
+    controller.register('nonono1', registrantAccount.address, 28 * DAYS, secret, { value: 28 * DAYS + 1 })
   })
 
   it('cannot register when not in wishlist', async () => {
     const commitment = await controller.makeCommitment('wish', registrantAccount.address, secret);
     await controller.commit(commitment);
-
     await evm.advanceTime((await controller.minCommitmentAge()).toNumber());
 
     await expect(controller.register('wish', registrantAccount.address, 28 * DAYS, secret, { value: 28 * DAYS + 1 }))

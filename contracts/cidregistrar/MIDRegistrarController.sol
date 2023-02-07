@@ -7,6 +7,7 @@ import "./BaseRegistrarImplementation.sol";
 import "./StringUtils.sol";
 import "../resolvers/Resolver.sol";
 import "./IMIDRegistrarController.sol";
+import "../business/IWishlist.sol";
 
 /**
  * @dev A registrar controller for registering and renewing names at fixed cost.
@@ -29,17 +30,46 @@ contract MIDRegistrarController is Ownable, IMIDRegistrarController {
 
     address public treasury;
 
+    // wishlist contract
+    IWishlist public wishlist;
+
+    // reservation period, out of which we    
+    uint256 public reservationPhraseStart;
+    uint256 public reservationPhraseEnd;
+
     event NameRegistered(string name, bytes32 indexed label, address indexed owner, uint cost, uint expires);
     event NameRenewed(string name, bytes32 indexed label, uint cost, uint expires);
     event NewPriceOracle(address indexed oracle);
 
-    constructor(BaseRegistrarImplementation _base, PriceOracle _prices, uint _minCommitmentAge, uint _maxCommitmentAge) {
-        require(_maxCommitmentAge > _minCommitmentAge, "invalid commitment age");
+    constructor(
+        address wishlist_,
+        uint256 reservationPhraseStart_,
+        uint256 reservationPhraseEnd_,
+        BaseRegistrarImplementation base_, 
+        PriceOracle prices_, 
+        uint minCommitmentAge_, 
+        uint maxCommitmentAge_
+    ) {
+        require(maxCommitmentAge_ > minCommitmentAge_, "invalid commitment age");
+        setWishlist(wishlist_);
+        setReservationPhraseTime(reservationPhraseStart_, reservationPhraseEnd_);
+        base = base_;
+        prices = prices_;
+        minCommitmentAge = minCommitmentAge_;
+        maxCommitmentAge = maxCommitmentAge_;
+    }
 
-        base = _base;
-        prices = _prices;
-        minCommitmentAge = _minCommitmentAge;
-        maxCommitmentAge = _maxCommitmentAge;
+    function setWishlist(address wishlist_) public onlyOwner {
+        wishlist = IWishlist(wishlist_);
+    }
+
+    function setReservationPhraseTime(uint256 reservationPhraseStart_, uint256 reservationPhraseEnd_) public onlyOwner {
+        reservationPhraseStart = reservationPhraseStart_;
+        reservationPhraseEnd = reservationPhraseEnd_;
+    }
+    
+    function isReservationAlive() public view returns (bool) {
+        return block.timestamp > reservationPhraseStart && block.timestamp < reservationPhraseEnd;
     }
 
     function setTreasury(address treasury_) external onlyOwner {
@@ -84,6 +114,12 @@ contract MIDRegistrarController is Ownable, IMIDRegistrarController {
     }
 
     function registerWithConfig(string memory name, address owner, uint duration, bytes32 secret, address resolver, address addr) public payable virtual override {
+        // if reservation is alive, you can only register the name you've wished
+        if (isReservationAlive()) {
+            require(wishlist.wishCounts(keccak256(bytes(name))) == 1, "wish count must be 1");
+            require(wishlist.userHasWish(owner, name), "not owner's wish");
+        }
+        
         bytes32 commitment = makeCommitmentWithConfig(name, owner, secret, resolver, addr);
         uint cost = _consumeCommitment(name, duration, commitment);
 
@@ -153,9 +189,9 @@ contract MIDRegistrarController is Ownable, IMIDRegistrarController {
         emit NewPriceOracle(address(prices));
     }
 
-    function setCommitmentAges(uint _minCommitmentAge, uint _maxCommitmentAge) public onlyOwner {
-        minCommitmentAge = _minCommitmentAge;
-        maxCommitmentAge = _maxCommitmentAge;
+    function setCommitmentAges(uint minCommitmentAge_, uint maxCommitmentAge_) public onlyOwner {
+        minCommitmentAge = minCommitmentAge_;
+        maxCommitmentAge = maxCommitmentAge_;
     }
 
     function withdraw() public onlyOwner {

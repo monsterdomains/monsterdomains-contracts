@@ -25,10 +25,6 @@ import BulkRenewal80001 from './deployments/mumbai/BulkRenewal.json';
 import DummySourceBaseRegistrar80001 from './deployments/mumbai/DummySourceBaseRegistrar.json';
 import DummySourceRegistry80001 from './deployments/mumbai/DummySourceRegistry.json';
 import Wishlist80001 from './deployments/mumbai/Wishlist.json';
-import ReservationRegistrarController80001 from './deployments/mumbai/ReservationRegistrarController.json';
-
-
-
 
 
 export const deployments = {
@@ -110,10 +106,4 @@ export const deployments = {
       80001: Wishlist80001.address,
     }
   },
-  ReservationRegistrarController: {
-    abi: ReservationRegistrarController80001.abi,
-    address: {
-      80001: ReservationRegistrarController80001.address,
-    }
-  }
 }
