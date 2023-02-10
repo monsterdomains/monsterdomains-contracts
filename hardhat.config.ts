@@ -44,6 +44,16 @@ export default {
         }
       }
     },
+    bsc: {
+      accounts: [`0x${privateKey}`],
+      chainId: 56,
+      url: 'https://bsc-dataseed.binance.org',
+      verify: {
+        etherscan: {
+          apiUrl: 'https://api.bscscan.com'
+        }
+      }
+    },
     mumbai: {
       accounts: [`0x${privateKey}`],
       chainId: 80001,

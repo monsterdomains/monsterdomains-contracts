@@ -59,7 +59,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   }
 
   // Only attempt to make controller etc changes directly on testnets
-  if (network.name === 'mainnet') return
+  if (network.name === 'bsc') return
 
   // we don't need controller for this, controller thing is not online yet
   // const tx1 = await reverseRegistrar.setController(controller.address, true)

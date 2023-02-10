@@ -20,10 +20,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   let sourceRegistry
   let sourceBaseRegistrar
 
-  if (network.name === 'mainnet') {
-    // todo
-    sourceRegistry = ''
-    sourceBaseRegistrar = ''
+  if (network.name === 'bsc') {
+    sourceRegistry = '0x08ced32a7f3eec915ba84415e9c07a7286977956'
+    sourceBaseRegistrar = '0xE3b1D32e43Ce8d658368e2CBFF95D57Ef39Be8a6'
   } else {
     const dummySourceRegistry = await deploy('DummySourceRegistry', {
       from: deployer, args: []
@@ -84,7 +83,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   }
 
   // Only attempt to make controller etc changes directly on testnets
-  if (network.name === 'mainnet') return
+  if (network.name === 'bsc') return
 
   // we don't need controller for this, controller thing is not online yet
   // const tx1 = await reverseRegistrar.setController(controller.address, true)
