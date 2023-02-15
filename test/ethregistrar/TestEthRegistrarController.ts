@@ -7,7 +7,7 @@ import { BaseRegistrarImplementation, DummyOracle, MID, MIDRegistrarController, 
 const { evm } = require('../test-utils')
 
 const DAYS = 24 * 60 * 60;
-const WISH_CAP = 10; // should be enough for our current test
+const WISH_CAP = 2; // should be enough for our current test
 
 describe('TestEthRegistrarController', function () {
   let mid: MID;
@@ -117,7 +117,7 @@ describe('TestEthRegistrarController', function () {
     await expect(controller.register('nonono1', registrantAccount.address, 28 * DAYS, secret, { value: 28 * DAYS + 1 }))
       .to.be.revertedWith('wish count must be 1')
 
-      await wishlist.connect(registrantAccount).addWishes(['nonono1'])
+    await wishlist.connect(registrantAccount).setWishes(['nonono1', 'randomwish'])
     controller.register('nonono1', registrantAccount.address, 28 * DAYS, secret, { value: 28 * DAYS + 1 })
   })
 
@@ -129,13 +129,13 @@ describe('TestEthRegistrarController', function () {
     await expect(controller.register('wish', registrantAccount.address, 28 * DAYS, secret, { value: 28 * DAYS + 1 }))
       .to.be.revertedWith('wish count must be 1')
 
-    await wishlist.connect(registrantAccount).addWishes(['wish'])
+    await wishlist.connect(registrantAccount).setWishes(['wish', 'randomwish'])
     // OK
     await controller.register('wish', registrantAccount.address, 28 * DAYS, secret, { value: 28 * DAYS + 1 })
   })
 
   it('should permit new registrations', async () => {
-    await wishlist.connect(registrantAccount).addWishes(['newname'])
+    await wishlist.connect(registrantAccount).setWishes(['newname', 'randomwish'])
     const commitment = await controller.makeCommitment('newname', registrantAccount.address, secret);
     await controller.commit(commitment);
     expect(await controller.available(keccak256(Buffer.from('available')))).to.be.equal(true);
@@ -153,7 +153,7 @@ describe('TestEthRegistrarController', function () {
   });
 
   it('should permit new registrations with config', async () => {
-    await wishlist.connect(registrantAccount).addWishes(['newconfigname'])
+    await wishlist.connect(registrantAccount).setWishes(['newconfigname', 'randomwish'])
     const commitment = await controller.makeCommitmentWithConfig('newconfigname', registrantAccount.address, secret, resolver.address, registrantAccount.address);
     await controller.commit(commitment);
 
@@ -177,7 +177,7 @@ describe('TestEthRegistrarController', function () {
   });
 
   it('should permit a registration with resolver but not addr', async () => {
-    await wishlist.connect(registrantAccount).addWishes(['newconfigname2'])
+    await wishlist.connect(registrantAccount).setWishes(['newconfigname2', 'randomwish'])
 
     const commitment = await controller.makeCommitmentWithConfig('newconfigname2', registrantAccount.address, secret, resolver.address, ethers.constants.AddressZero);
     await controller.commit(commitment);
@@ -197,7 +197,7 @@ describe('TestEthRegistrarController', function () {
   });
 
   it('should include the owner in the commitment', async () => {
-    await wishlist.connect(registrantAccount).addWishes(['newname2'])
+    await wishlist.connect(registrantAccount).setWishes(['newname2', 'randomwish'])
 
     await controller.commit(await controller.makeCommitment('newname2', signers[2].address, secret));
 

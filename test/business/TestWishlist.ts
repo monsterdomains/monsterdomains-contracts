@@ -7,20 +7,19 @@ import { Wishlist } from 'src/types';
 import { deployContract } from 'ethereum-waffle';
 import { keccak256, namehash } from 'ethers/lib/utils';
 
-const WISH_CAP = 5;
+const WISH_CAP = 3;
 const BASE_NODE = namehash('bnb')
-const ZERO_HASH =
-  '0x0000000000000000000000000000000000000000000000000000000000000000'
 
 
 describe('TestWishlist', function () {
   let signers: SignerWithAddress[];
   let wishlist: Wishlist;
 
-  before(async function () {
+  beforeEach(async function () {
+    let ts = Number((await web3.eth.getBlock('latest')).timestamp);
     signers = await ethers.getSigners()
     wishlist = <Wishlist>await (await ethers.getContractFactory('Wishlist', signers[0])).deploy(
-      WISH_CAP, Math.floor(Date.now() / 1000), Math.floor(Date.now() / 1000) + 1, BASE_NODE
+      WISH_CAP, ts, ts + 10000, BASE_NODE
     );
   });
 
@@ -36,58 +35,62 @@ describe('TestWishlist', function () {
       await expect(wishlist.connect(signers[0]).setWishPhraseTime(0, 0)).to.be.revertedWith(
         'invalid parameters',
       );
-      await expect(wishlist.connect(signers[0]).setBaseNode(ZERO_HASH)).to.be.revertedWith(
+      await expect(wishlist.connect(signers[0]).setBaseNode(ethers.constants.HashZero)).to.be.revertedWith(
         'invalid parameters',
       );
       await wishlist.connect(signers[0]).setBaseNode(BASE_NODE); // ok
-      await wishlist.connect(signers[0]).setWishCap(11); // ok
-      await wishlist.connect(signers[0]).setWishPhraseTime(10, 20); // ok
-
+      await wishlist.connect(signers[0]).setWishCap(3); // ok
     })
   });
 
   describe('add list', function () {
-    it('basic tests', async function () {
-      let ts = Number((await web3.eth.getBlock('latest')).timestamp);
-
-      await expect(wishlist.connect(signers[2]).addWishes(['haha'])).to.be.revertedWith(
+    it('phrase tests', async function () {
+      await wishlist.connect(signers[0]).setWishPhraseTime(10, 20); // ok
+      await expect(wishlist.connect(signers[2]).setWishes(['haha', 'hehe', 'yoyo'])).to.be.revertedWith(
         'not wishlist phrase',
       );
+    })
 
-      await wishlist.connect(signers[0]).setWishCap(2); // ok
+    it('set wish tests', async function () {
+      let ts = Number((await web3.eth.getBlock('latest')).timestamp);
+      await wishlist.connect(signers[0]).setWishCap(3); // ok
       await wishlist.setWishPhraseTime(ts - 10, ts + 10000)
-      await expect(wishlist.connect(signers[1]).addWishes([''])).to.be.revertedWith(
+      await expect(wishlist.connect(signers[1]).setWishes(['', '', ''])).to.be.revertedWith(
         'empty name',
       );
 
-      await wishlist.connect(signers[1]).addWishes(['22'])
-      await wishlist.connect(signers[2]).addWishes(['33'])
-      await wishlist.connect(signers[3]).addWishes(['666'])
-      await expect(wishlist.connect(signers[3]).addWishes(['666'])).to.be.revertedWith(
+      await wishlist.connect(signers[1]).setWishes(['22', 'user2_name1', 'user2_name2'])
+      await wishlist.connect(signers[2]).setWishes(['33', 'user2_name1', 'user2_name2'])
+      await expect(wishlist.connect(signers[3]).setWishes(['456', '456', '780'])).to.be.revertedWith(
         'duplicated wish',
       );
 
-      expect(await wishlist.userHasWish(signers[1].address, '22'))
-      expect(!(await wishlist.userHasWish(signers[1].address, '999999')))
-      expect(await wishlist.userHasWish(signers[2].address, '33'))
-      expect(await wishlist.userHasWish(signers[3].address, '666'))
+      await wishlist.connect(signers[3]).setWishes(['666', 'user2_name1', 'user2_name2'])
+
+      expect(await wishlist.userHasWish(signers[1].address, '22')).to.be.equal(true)
+      expect(await wishlist.userHasWish(signers[1].address, 'user2_name1')).to.be.equal(true)
+      expect(!(await wishlist.userHasWish(signers[1].address, '999999'))).to.be.equal(true)
+      expect(await wishlist.userHasWish(signers[2].address, '33')).to.be.equal(true)
+      expect(await wishlist.userHasWish(signers[3].address, '666')).to.be.equal(true)
+      expect(await wishlist.userHasWish(signers[3].address, 'user2_name1')).to.be.equal(true)
     });
 
     it('wish cap', async function () {
-      await wishlist.connect(signers[1]).addWishes(['5555'])
-      await expect(wishlist.connect(signers[1]).addWishes(['999'])).to.be.revertedWith(
-        'exceed wish cap',
+      await expect(wishlist.connect(signers[1]).setWishes(['999', '123123', '12312312312', 'sdf'])).to.be.revertedWith(
+        'wrong wish number',
       );
-      await expect(wishlist.connect(signers[5]).addWishes(['9999', '123123', '666'])).to.be.revertedWith(
-        'exceed wish cap',
-      );
-      expect(await wishlist.userWishes(signers[1].address)).deep.equal(['22', '5555'])
     })
 
     it('cross wish', async function () {
-      await wishlist.connect(signers[3]).addWishes(['5555'])
-      await wishlist.connect(signers[2]).addWishes(['5555'])
-      expect(await wishlist.wishCounts(keccak256(Buffer.from('5555')))).to.be.equal(3)
+      await wishlist.connect(signers[3]).setWishes(['5555', '6666', '7777'])
+      await wishlist.connect(signers[2]).setWishes(['5555', '6666', '7777'])
+      expect(await wishlist.wishCounts(keccak256(Buffer.from('5555')))).to.be.equal(2)
+      expect(await wishlist.wishCounts(keccak256(Buffer.from('6666')))).to.be.equal(2)
+      expect(await wishlist.wishCounts(keccak256(Buffer.from('7777')))).to.be.equal(2)
+    })
+
+    it('wish count', async function () {
+
     })
   })
 })

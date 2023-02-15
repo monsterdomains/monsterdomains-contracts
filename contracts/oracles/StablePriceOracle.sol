@@ -3,7 +3,7 @@ pragma solidity >=0.8.4;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./PriceOracle.sol";
-import "../cidregistrar/StringUtils.sol";
+import "../midregistrar/StringUtils.sol";
 
 interface AggregatorInterface {
   function latestAnswer() external view returns (int256);

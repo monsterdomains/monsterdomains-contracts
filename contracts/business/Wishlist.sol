@@ -2,7 +2,7 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "../cidregistrar/StringUtils.sol";
+import "../midregistrar/StringUtils.sol";
 import "./IWishlist.sol";
 
 contract Wishlist is Ownable, IWishlist {
@@ -51,30 +51,39 @@ contract Wishlist is Ownable, IWishlist {
         return block.timestamp;
     } 
 
-    function addWishes(string[] memory names) override external {
+    function setWishes(string[] memory names) override external {
         require(block.timestamp > wishPhraseStart && block.timestamp < wishPhraseEnd, "not wishlist phrase");
+        require(names.length == wishCap, "wrong wish number");
+
+        string[] storage currentNames = wishes[msg.sender];
         for (uint256 i = 0; i < names.length; ++i) {
-            addWish_(names[i]);
+            string memory name = names[i];
+            bytes32 namehash = keccak256(bytes(name));
+            require(names[i].strlen() > 0, "empty name");
+
+            // check duplicates
+            for (uint256 j = 0; j < names.length; ++j) {
+                if (i != j) {
+                    require(keccak256(bytes(names[j])) != namehash, "duplicated wish");
+                }
+            }
+
+            // if this user never wished this name, increase count
+            bool hasWished;
+            for (uint256 j = 0; j < currentNames.length; ++j) {
+                hasWished = keccak256(bytes(currentNames[j])) == namehash;
+                if (hasWished) {
+                    break;
+                }
+            }
+            if (!hasWished) {
+                wishCounts[namehash]++;
+            }
+
+            emit WishAdded(msg.sender, name);
         }
-    }
-
-    // note: name is label name without suffix
-    function addWish_(string memory name) internal {
-        // empty name not allowed
-        require(name.strlen() > 0, "empty name");
-
-        bytes32 namehash = keccak256(bytes(name));
-        require(wishes[msg.sender].length < wishCap, "exceed wish cap");
-
-        // duplicated wish is not allowed
-        string[] storage names = wishes[msg.sender];
-        for (uint256 i = 0; i < names.length; i++) {
-            require(keccak256(bytes(names[i])) != namehash, "duplicated wish"); 
-        }
-
-        wishes[msg.sender].push(name);
-        wishCounts[namehash]++;
-        emit WishAdded(msg.sender, name);
+        
+        wishes[msg.sender] = names;
     }
 
     // if more than 1 user wished this name, this name need auction

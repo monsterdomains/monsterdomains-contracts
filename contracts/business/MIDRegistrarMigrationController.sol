@@ -5,9 +5,9 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/structs/BitMaps.sol";
 import "../oracles/PriceOracle.sol";
-import "./BaseRegistrarImplementation.sol";
+import "../midregistrar/BaseRegistrarImplementation.sol";
+import "../midregistrar/StringUtils.sol";
 import "../resolvers/Resolver.sol";
-import "./StringUtils.sol";
 
 /**
  * This contract supports users to migrate their domains from other domain services
@@ -37,9 +37,10 @@ contract MIDRegistrarMigrationController is Ownable {
     uint256 public durationRoundUpUnit = 86400 * 30 * 3; // 3 months
 
     /**
-     * @dev discount percentage, e.g 85 => 85%
+     * @dev discount percentage
+     *  e.g [50, 60, 70, 80, 90] => For names in length 1->5, the discounts: 50%, 60%, 70%, 80%, 90%
      */
-    uint256 public discountPercentage = 100;
+    uint256[] public discountPercentages;
 
     /**
      * @dev key: token id
@@ -68,7 +69,8 @@ contract MIDRegistrarMigrationController is Ownable {
         SourceBaseRegistrar sourceBaseRegistrar_,
         address treasury_,
         uint256 start_,
-        uint256 end_
+        uint256 end_,
+        uint256[] memory discountPercentages_
     ) {
         base = base_;
         start = start_;
@@ -77,6 +79,7 @@ contract MIDRegistrarMigrationController is Ownable {
         sourceBaseRegistrar = sourceBaseRegistrar_;
         treasury = treasury_;
         priceOracle = priceOracle_;
+        setDiscountPercentages(discountPercentages_);
     }
 
     function valid(string memory labelname) public pure returns(bool) {
@@ -88,9 +91,9 @@ contract MIDRegistrarMigrationController is Ownable {
         return valid(labelname) && base.available(uint256(label));
     }
 
-    function setDiscountPercentage(uint256 discountPercentage_) external onlyOwner {
-        require(discountPercentage_ <= 100, "invalid discount");
-        discountPercentage = discountPercentage_;
+    function setDiscountPercentages(uint256[] memory discountPercentages_) public onlyOwner {
+        require(discountPercentages_.length > 0, "empty discount percentages");
+        discountPercentages = discountPercentages_;
     }
 
     function setDurationRoundUpUnit(uint256 durationRoundUpUnit_) external onlyOwner {
@@ -116,15 +119,27 @@ contract MIDRegistrarMigrationController is Ownable {
     /**
      * @dev rent price with discount
      */
-    function rentPrice(string memory labelname, uint256 duration)
+    function rentPriceWithDuration(string memory labelname, uint256 duration)
         public
         view
         returns (uint256)
     {
+        uint256 len = labelname.strlen();
         bytes32 tokenId = keccak256(bytes(labelname));
         uint256 price = priceOracle.price(labelname, base.nameExpires(uint256(tokenId)), duration);
-        return price * discountPercentage / 100;
+        if(len > discountPercentages.length) {
+            len = discountPercentages.length;
+        }
+        return price * discountPercentages[len - 1] / 100;
     }
+
+    function rentPrice(string memory labelname) public view returns (uint256) {
+        bytes32 labelHash = keccak256(bytes(labelname));
+        uint256 tokenId = uint256(labelHash);
+        uint256 duration = migratedDuration(tokenId);
+        return rentPriceWithDuration(labelname, duration);
+    }
+
 
     /**
      * @dev From Openzepplin, returns the ceiling of the division of two numbers.
@@ -186,9 +201,9 @@ contract MIDRegistrarMigrationController is Ownable {
     }
 
     /**
-     * @dev migrate .bnb name to our service,
+     * @dev migrate .bnb name to our service, owner is the recipient address
      */
-    function migrateWithResolver(string memory labelname, address resolver) external payable {
+    function migrateWithResolver(string memory labelname, address owner, address resolver) external payable {
         require(
             block.timestamp > start && block.timestamp < end,
             "migration not available"
@@ -198,7 +213,7 @@ contract MIDRegistrarMigrationController is Ownable {
         uint256 tokenId = uint256(labelHash);
         bytes32 nodehash = nodeHashByLabel(labelname);
 
-        require(isNameOwner(msg.sender, nodehash), "not the source name owner");
+        require(isNameOwner(owner, nodehash), "not the source name owner");
         // the following checking might be duplicated, but it's ok
         require(!isNameMigrated(nodehash), "name already migrated");
         require(available(labelname), "not available");
@@ -207,7 +222,7 @@ contract MIDRegistrarMigrationController is Ownable {
         require(duration > 0, "source token might be expired"); // expired
 
         // the cost with discount
-        uint cost = rentPrice(labelname, duration);
+        uint cost = rentPriceWithDuration(labelname, duration);
 
         uint256 expiry;
         require(resolver != address(0), "empty resolver");
@@ -220,13 +235,13 @@ contract MIDRegistrarMigrationController is Ownable {
         base.mid().setResolver(nodehash, resolver);
 
         // Configure the resolver
-        Resolver(resolver).setAddr(nodehash, msg.sender);
+        Resolver(resolver).setAddr(nodehash, owner);
 
         // Now transfer full ownership to the expeceted owner
-        base.reclaim(tokenId, msg.sender);
-        base.transferFrom(address(this), msg.sender, tokenId);
+        base.reclaim(tokenId, owner);
+        base.transferFrom(address(this), owner, tokenId);
 
-        emit Migrated(labelname, msg.sender, cost, expiry);
+        emit Migrated(labelname, owner, cost, expiry);
 
         // transfer the revenue to treasury
         require(msg.value >= cost, "insufficient payment");

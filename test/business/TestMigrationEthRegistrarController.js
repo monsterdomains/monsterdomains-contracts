@@ -74,6 +74,7 @@ contract('MIDRegistrarMigrationController', function (accounts) {
             treasury,
             ts,
             ts + 86400,
+            [50, 60, 70, 80, 90],
             {from: ownerAccount}
         );
         await baseRegistrar.addController(controller.address, {from: ownerAccount});
@@ -85,7 +86,7 @@ contract('MIDRegistrarMigrationController', function (accounts) {
 
     it('setters check', async () => {
         // only check
-        await expect(controller.setDiscountPercentage(1, {from: accounts[1]})).to.be.revertedWith(
+        await expect(controller.setDiscountPercentages([1, 1, 1, 1, 1], {from: accounts[1]})).to.be.revertedWith(
 			'Ownable: caller is not the owner',
 		);
         await expect(controller.setDurationRoundUpUnit(100, {from: accounts[1]})).to.be.revertedWith(
@@ -101,8 +102,8 @@ contract('MIDRegistrarMigrationController', function (accounts) {
 			'Ownable: caller is not the owner',
 		);
         // value check
-        await expect(controller.setDiscountPercentage(101)).to.be.revertedWith(
-			'invalid discount',
+        await expect(controller.setDiscountPercentages([])).to.be.revertedWith(
+			'empty discount percentages',
 		);
         await expect(controller.setDurationRoundUpUnit(0)).to.be.revertedWith(
 			'invalid roundup unit',
@@ -162,16 +163,14 @@ contract('MIDRegistrarMigrationController', function (accounts) {
     })
 
     it('rent price with discount', async () => {
-        let cost = await controller.rentPrice('good', 86400);
-        assert.equal(cost, oraclePrices[4 - 1] * 86400)
+        let cost = await controller.rentPriceWithDuration('good', 86400);
+        assert.equal(cost, oraclePrices[4 - 1] * 86400 * 0.8)
 
-        await controller.setDiscountPercentage(50)
-        cost = await controller.rentPrice('asdadasd', 86400);
-        assert.equal(cost, oraclePrices[4] * 86400 / 2)
+        cost = await controller.rentPriceWithDuration('asdadasd', 86400);
+        assert.equal(cost, oraclePrices[4] * 86400 * 0.9)
 
-        await controller.setDiscountPercentage(20)
-        cost = await controller.rentPrice('god', 86400);
-        assert.equal(cost, oraclePrices[3 - 1] * 86400 / 5)
+        cost = await controller.rentPriceWithDuration('god', 86400);
+        assert.equal(cost, oraclePrices[3 - 1] * 86400 * 0.7)
     })
 
     it('migrations precheck', async () => {
@@ -180,23 +179,23 @@ contract('MIDRegistrarMigrationController', function (accounts) {
         // precheck
 		let ts = (await web3.eth.getBlock('latest')).timestamp;
         await controller.setActivePeriod(100, ts - 1)
-        await expect(controller.migrateWithResolver("newname", resolver.address, {value: 0})).to.be.revertedWith(
+        await expect(controller.migrateWithResolver("newname", ownerAccount, resolver.address, {value: 0})).to.be.revertedWith(
 			'migration not available',
 		);
 
         await controller.setActivePeriod(ts - 10, ts + 10)
-        await expect(controller.migrateWithResolver("newname", resolver.address, {value: 0})).to.be.revertedWith(
+        await expect(controller.migrateWithResolver("newname", ownerAccount, resolver.address, {value: 0})).to.be.revertedWith(
 			'not the source name owner',
 		);
 
         await sourceRegistry.setOwner(namehash.hash("newname.bnb"), ownerAccount);
         await sourceBaseRegistrar.setNameExpires(sha3("newname"), ts - 1); 
-        await expect(controller.migrateWithResolver("newname", resolver.address, {value: 0, from: ownerAccount})).to.be.revertedWith(
+        await expect(controller.migrateWithResolver("newname", ownerAccount, resolver.address, {value: 0, from: ownerAccount})).to.be.revertedWith(
 			'source token might be expired',
 		);
         
         await sourceBaseRegistrar.setNameExpires(sha3("newname"), ts + 100); 
-        await expect(controller.migrateWithResolver("newname", ZERO_ADDRESS, {value: 0})).to.be.revertedWith(
+        await expect(controller.migrateWithResolver("newname", ownerAccount, ZERO_ADDRESS, {value: 0})).to.be.revertedWith(
 			'empty resolver',
 		);
     });
@@ -206,7 +205,6 @@ contract('MIDRegistrarMigrationController', function (accounts) {
 
         // prepare a valid env
 		let ts = (await web3.eth.getBlock('latest')).timestamp;
-        await controller.setDiscountPercentage(80)
         await controller.setActivePeriod(ts - 10, ts + 10)
         await controller.setDurationRoundUpUnit(86400);
 
@@ -218,7 +216,7 @@ contract('MIDRegistrarMigrationController', function (accounts) {
         
         const duration = expiry - (await web3.eth.getBlock('latest')).timestamp;
         const newDuration = Math.ceil(duration / 86400) * 86400
-        const cost = oraclePrices[4] * newDuration * 0.8 // manual calculation
+        const cost = oraclePrices[4] * newDuration * 0.9 // manual calculation
         
         const tx = await controller.migrateWithResolver("great", resolver.address, {value: cost})
         const newExpiry = (await web3.eth.getBlock('latest')).timestamp + newDuration
