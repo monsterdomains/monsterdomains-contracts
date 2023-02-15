@@ -62,6 +62,14 @@ contract MIDRegistrarMigrationController is Ownable {
         uint256 expiry
     );
 
+    event NameRegistered(
+        string name, 
+        bytes32 indexed label, 
+        address indexed owner, 
+        uint cost, 
+        uint expires
+    );
+
     constructor(
         BaseRegistrarImplementation base_,
         PriceOracle priceOracle_, 
@@ -255,6 +263,14 @@ contract MIDRegistrarMigrationController is Ownable {
         }
 
         migrationRecords.set(uint256(nodehash));
+
+        emit NameRegistered(
+            labelname, 
+            labelHash, 
+            owner, 
+            cost, 
+            expiry
+        );
     }
 
     function withdraw() public onlyOwner {

@@ -212,13 +212,13 @@ contract('MIDRegistrarMigrationController', function (accounts) {
         let expiry = ts + 100
         await sourceBaseRegistrar.setNameExpires(sha3("great"), expiry); 
 
-        await expect(controller.migrateWithResolver("great", resolver.address, {value: 0})).to.be.revertedWith('insufficient payment')
+        await expect(controller.migrateWithResolver("great", ownerAccount, resolver.address, {value: 0})).to.be.revertedWith('insufficient payment')
         
         const duration = expiry - (await web3.eth.getBlock('latest')).timestamp;
         const newDuration = Math.ceil(duration / 86400) * 86400
         const cost = oraclePrices[4] * newDuration * 0.9 // manual calculation
         
-        const tx = await controller.migrateWithResolver("great", resolver.address, {value: cost})
+        const tx = await controller.migrateWithResolver("great", ownerAccount, resolver.address, {value: cost})
         const newExpiry = (await web3.eth.getBlock('latest')).timestamp + newDuration
         
         assert.equal(tx.logs[0].event, 'Migrated');
@@ -228,13 +228,19 @@ contract('MIDRegistrarMigrationController', function (accounts) {
 		ts = (await web3.eth.getBlock('latest')).timestamp;
         assert.equal(tx.logs[0].args.expiry, newExpiry);
 
+        assert.equal(tx.logs[1].event, 'NameRegistered');
+        assert.equal(tx.logs[1].args.label, sha3('great'));
+        assert.equal(tx.logs[1].args.owner, ownerAccount);
+        assert.equal(tx.logs[1].args.expires, newExpiry);
+        assert.equal(tx.logs[1].args.cost, cost);
+
         const nodehash = namehash.hash("great.bnb");
         assert.equal((await mid.resolver(nodehash)), resolver.address);
         assert.equal((await mid.owner(nodehash)), ownerAccount);
         assert.equal((await resolver.addr(nodehash)), ownerAccount);
         assert.equal(toBN(await web3.eth.getBalance(treasury)).sub(toBN(treasuryBalanceBefore)).toNumber(), cost);
 
-        await expect(controller.migrateWithResolver("great", resolver.address, {value: 0}))
+        await expect(controller.migrateWithResolver("great", ownerAccount, resolver.address, {value: 0}))
             .to.be.revertedWith('name already migrated')
     })
     
