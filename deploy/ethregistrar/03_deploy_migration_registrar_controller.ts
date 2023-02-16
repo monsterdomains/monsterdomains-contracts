@@ -42,6 +42,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   // address treasury_,
   // uint256 start_,
   // uint256 end_
+  // uint256[] discountPercentages_
   const now = 1675743226
   const deployArgs = {
     from: deployer,
@@ -53,6 +54,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       '0x0000000000000000000000000000000000000000',
       now,
       now + 86400 * 100,
+      [80, 80, 80, 80, 80],
     ],
     log: true,
   }
