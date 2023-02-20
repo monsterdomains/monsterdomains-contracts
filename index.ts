@@ -31,130 +31,91 @@ import Wishlist56 from './deployments/bsc/Wishlist.json';
 
 export const deployments = {
   BaseRegistrarImplementation: {
-    abi: {
-      80001: BaseRegistrarImplementation80001.abi,
-      56: BaseRegistrarImplementation56.abi,
-    },
+    abi: BaseRegistrarImplementation56.abi,
     address: {
       80001: BaseRegistrarImplementation80001.address,
       56: BaseRegistrarImplementation56.address,
     },
   },
   DefaultReverseResolver: {
-    abi: {
-      80001: DefaultReverseResolver80001.abi,
-      56: DefaultReverseResolver56.abi,
-    },
+    abi: DefaultReverseResolver56.abi,
     address: {
       80001: DefaultReverseResolver80001.address,
       56: DefaultReverseResolver56.address,
     }
   },
   MIDRegistrarController: {
-    abi: {
-      80001: MIDRegistrarController80001.abi,
-      56: MIDRegistrarController56.abi,
-    },
+    abi: MIDRegistrarController56.abi,
     address: {
       80001: MIDRegistrarController80001.address,
       56: MIDRegistrarController56.address,
     }
   },
   MIDRegistry: {
-    abi: {
-      80001: MIDRegistry80001.abi,
-      56: MIDRegistry56.abi,
-    },
+    abi: MIDRegistry56.abi,
     address: {
       80001: MIDRegistry80001.address,
       56: MIDRegistry56.address,
     }
   },
   PublicResolver: {
-    abi: {
-      80001: PublicResolver80001.abi,
-      56: PublicResolver56.abi,
-    },
+    abi: PublicResolver56.abi,
     address: {
       80001: PublicResolver80001.address,
       56: PublicResolver56.address,
     }
   },
   ReverseRegistrar: {
-    abi: {
-      80001: ReverseRegistrar80001.abi,
-      56: ReverseRegistrar56.abi,
-    },
+    abi: ReverseRegistrar56.abi,
     address: {
       80001: ReverseRegistrar80001.address,
       56: ReverseRegistrar56.address,
     }
   },
   Root: {
-    abi: {
-      80001: Root80001.abi,
-      56: Root80001.abi,
-    },
+    abi: Root56.abi,
     address: {
       80001: Root80001.address,
       56: Root56.address,
     }
   },
   StablePriceOracle: {
-    abi: {
-      80001: StablePriceOracle80001.abi,
-      56: StablePriceOracle56.abi,
-    },
+    abi: StablePriceOracle56.abi,
     address: {
       80001: StablePriceOracle80001.address,
       56: StablePriceOracle56.address,
     }
   },
   BulkRenewal: {
-    abi: {
-      80001: BulkRenewal80001.abi,
-      56: BulkRenewal56.abi,
-    },
+    abi: BulkRenewal56.abi,
     address: {
       80001: BulkRenewal80001.address,
       56: BulkRenewal56.address,
     }
   },
   MIDRegistrarMigrationController: {
-    abi: {
-      80001: MIDRegistrarMigrationController80001.abi,
-      56: MIDRegistrarMigrationController56.abi,
-    },
+    abi: MIDRegistrarMigrationController56.abi,
     address: {
       80001: MIDRegistrarMigrationController80001.address,
       56: MIDRegistrarMigrationController56.address,
     }
   },
   DummySourceBaseRegistrar: {
-    abi: {
-      80001: DummySourceBaseRegistrar80001.abi,
-      56: [],
-    },
+    abi: DummySourceBaseRegistrar56.abi,
     address: {
       80001: DummySourceBaseRegistrar80001.address,
       56: '',
     }
   },
   DummySourceRegistry: {
-    abi: {
-      80001: DummySourceRegistry80001.abi,
-      56: [],
-    },
+    abi: DummySourceRegistry56.abi,
     address: {
       80001: DummySourceRegistry80001.address,
       56: '',
     }
   },
   Wishlist: {
-    abi: {
-      80001: Wishlist80001.abi,
-      56: Wishlist56.abi,
-    },
+    abi: Wishlist56.abi,
     address: {
       80001: Wishlist80001.address,
       56: Wishlist56.address,
