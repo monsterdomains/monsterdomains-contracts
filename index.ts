@@ -101,14 +101,14 @@ export const deployments = {
     }
   },
   DummySourceBaseRegistrar: {
-    abi: DummySourceBaseRegistrar56.abi,
+    abi: DummySourceBaseRegistrar80001.abi,
     address: {
       80001: DummySourceBaseRegistrar80001.address,
       56: '',
     }
   },
   DummySourceRegistry: {
-    abi: DummySourceRegistry56.abi,
+    abi: DummySourceRegistry80001.abi,
     address: {
       80001: DummySourceRegistry80001.address,
       56: '',
