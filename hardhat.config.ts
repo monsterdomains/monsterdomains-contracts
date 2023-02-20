@@ -47,7 +47,7 @@ export default {
     bsc: {
       accounts: [`0x${privateKey}`],
       chainId: 56,
-      url: 'https://bsc-dataseed.binance.org',
+      url: 'https://bsc.rpc.blxrbdn.com',
       verify: {
         etherscan: {
           apiUrl: 'https://api.bscscan.com'
